@@ -1,4 +1,4 @@
 *.exe
 *.bin
-
-/test.txt
+main.exe
+test.txt
