@@ -4,6 +4,7 @@ Find Duplicate Files in specific directory based on file hash
 Install
 - Perl
 - nams
+- make
 
 Add both binary path to environment PATH
 
