@@ -6,6 +6,10 @@
 #include <sstream>
 #include <iomanip>
 #include <openssl/md5.h>
+#include <filesystem>
+#include <vector>
+#include <string>
+namespace fs = std::filesystem;
 using namespace std;
 
 const unsigned long int BUFFER_SIZE = 4096;
@@ -69,6 +73,61 @@ public:
 
         res.md5_hash = ss.str();
         return res;
+    }
+
+    static void print_directories(const fs::path &path)
+    {
+        for (const auto &entry : fs::directory_iterator(path))
+        {
+            if (fs::is_directory(entry))
+            {
+                std::cout << entry.path() << std::endl;
+                print_directories(entry.path()); // Recursive call for subdirectories
+            }
+        }
+    }
+
+    static void getDirectories(const fs::path &root, vector<fs::path> &dirsOut)
+    {
+        for (const auto &entry : fs::directory_iterator(root))
+        {
+            if (fs::is_directory(entry))
+            {
+                dirsOut.push_back(entry.path());
+                getDirectories(entry.path(), dirsOut);
+            }
+        }
+    }
+
+    static void print_files(vector<fs::path> &dirs)
+    {
+        vector<fs::path> files;
+
+        for (const auto &entry : dirs)
+        {
+            for (const auto &entry : fs::directory_iterator(entry))
+            {
+                if (fs::is_regular_file(entry))
+                {
+                    std::cout << entry.path().filename().string() << std::endl;
+                }
+            }
+        }
+    }
+
+    static vector<fs::path> getFiles(vector<fs::path> &dirs)
+    {
+        vector<fs::path> files;
+
+        for (const auto &entry : dirs)
+        {
+            for (const auto &entry : fs::directory_iterator(entry))
+            {
+                if (fs::is_regular_file(entry))
+                    files.push_back(entry.path());
+            }
+        }
+        return files;
     }
 };
 
