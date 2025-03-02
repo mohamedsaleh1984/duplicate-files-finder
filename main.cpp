@@ -8,7 +8,7 @@ using namespace std;
 
 int main()
 {
-    std::string file_path = "README.md";
+    std::string file_path = "test.txt";
     std::ofstream file(file_path);
     file << "Hello, world!";
     file.close();
