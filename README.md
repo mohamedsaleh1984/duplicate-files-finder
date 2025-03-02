@@ -49,5 +49,21 @@ Follow Openssl Install Instructions
 
 build
 ```
-g++ main.cpp -o main -lssl -lcrypto
+make build
+```
+
+run
+```
+make run
+```
+
+test
+
+```
+make test
+```
+
+clean
+```
+make clean
 ```

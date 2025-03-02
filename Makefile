@@ -1,5 +1,3 @@
-$(info Using Makefile build system)
-
 libfilehelper:
 ifeq ($(OS),Windows_NT)
 	@if not exist ./libs/libfilehelper.a ( \
@@ -20,7 +18,7 @@ endif
 
 libcatch:
 ifeq ($(OS),Windows_NT)
-	if not exist libs mkdir libs
+
 	@if not exist ./libs/libcatch.a ( \
 		g++ -std=c++17 -O -c ./catch/catch_amalgamated.cpp -o catch.o && \
 		ar rcs libcatch.a catch.o && \
@@ -67,3 +65,11 @@ else
 	./main.out
 endif
 
+clean:
+ifeq ($(OS),Windows_NT)
+	del /F /Q main.exe
+	del /F /Q libs
+else
+	rm -f main.o
+	mr -f ./libs
+endif
