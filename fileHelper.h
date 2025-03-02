@@ -8,20 +8,29 @@
 #include <openssl/md5.h>
 using namespace std;
 
+const unsigned long int BUFFER_SIZE = 4096;
+/// @brief Retain error information.
 struct md5_hash_result
 {
+    // mdf hash value
     string md5_hash;
+    // error message if there has error
     string error_message;
+    // error indicator
     bool has_error = false;
 };
 
+/// @brief Helper class to perform basic functions on files, directories
 class FileHelper
 {
 public:
     static struct md5_hash_result calculate_md5_hash(const std::string &file_path)
     {
         struct md5_hash_result res;
+        MD5_CTX md5Context;
+        MD5_Init(&md5Context);
 
+        // read file content
         std::ifstream file(file_path, std::ios::binary);
         if (!file.is_open())
         {
@@ -30,13 +39,17 @@ public:
             return res;
         }
 
-        MD5_CTX md5Context;
-        MD5_Init(&md5Context);
-
-        char buffer[1024];
+        char buffer[BUFFER_SIZE];
         while (file.read(buffer, sizeof(buffer)))
         {
             MD5_Update(&md5Context, buffer, file.gcount());
+        }
+
+        if (file.fail() && !file.eof())
+        {
+            res.has_error = true;
+            res.error_message = "Error read file.";
+            return res;
         }
 
         unsigned char hash[MD5_DIGEST_LENGTH];
