@@ -13,13 +13,13 @@ int main()
     file << "Hello, world!";
     file.close();
 
-    std::string hash_value = FileHelper::calculate_md5_hash(file_path);
-    if (!hash_value.empty())
+    md5_hash_result hash_result = FileHelper::calculate_md5_hash(file_path);
+    if (hash_result.has_error)
     {
-        std::cout << "MD5 hash of " << file_path << ": " << hash_value << std::endl;
+        cout << hash_result.error_message << endl;
     }
     else
     {
-        std::cerr << "Error calculating MD5 hash or opening file." << std::endl;
+        cout << "MD5 has " << hash_result.md5_hash << endl;
     }
 }
