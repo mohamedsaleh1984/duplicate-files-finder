@@ -28,6 +28,7 @@ struct md5_hash_result
 class FileHelper
 {
 public:
+    /// @brief Calculate MD5 has for file
     static struct md5_hash_result calculate_md5_hash(const std::string &file_path)
     {
         struct md5_hash_result res;
@@ -75,6 +76,8 @@ public:
         return res;
     }
 
+    /// @brief Printout directiorys for desired path
+    /// @param path
     static void print_directories(const fs::path &path)
     {
         for (const auto &entry : fs::directory_iterator(path))
@@ -87,6 +90,9 @@ public:
         }
     }
 
+    /// @brief Get directories in root
+    /// @param root
+    /// @param dirsOut
     static void getDirectories(const fs::path &root, vector<fs::path> &dirsOut)
     {
         for (const auto &entry : fs::directory_iterator(root))
@@ -99,6 +105,8 @@ public:
         }
     }
 
+    /// @brief Printout file in specific dirs.
+    /// @param dirs
     static void print_files(vector<fs::path> &dirs)
     {
         vector<fs::path> files;
@@ -115,6 +123,9 @@ public:
         }
     }
 
+    /// @brief Return list of files in Dirs directories
+    /// @param dirs
+    /// @return
     static vector<fs::path> getFiles(vector<fs::path> &dirs)
     {
         vector<fs::path> files;
