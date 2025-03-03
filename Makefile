@@ -60,9 +60,9 @@ endif
 build: clean libfinder
 	$(info    Binary build)
 ifeq ($(OS),Windows_NT)
-	g++ -std=c++17 main.cpp -Ifinder -Llibs -lfinder -lssl -lcrypto -o main.exe -Wno-unused-parameter
+	g++ -std=c++17 main.cpp -Ifinder -Llibs -lfinder -lssl -lcrypto -o main.exe -Wno-unused-parameter -Wno-deprecated-declarations
 else
-	g++ -std=c++17 main.cpp -Ifinder -Llibs -lfinder -lssl -lcrypto -o main.out -Wno-unused-parameter
+	g++ -std=c++17 main.cpp -Ifinder -Llibs -lfinder -lssl -lcrypto -o main.out -Wno-unused-parameter -Wdeprecated-declarations
 endif
 
 run: build
