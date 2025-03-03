@@ -15,7 +15,23 @@ using namespace std;
 using namespace ns_finder;
 #define CHUNK_SIZE 8192
 
-string file_path = "../TEST_FILE_DELETE_AFTER_500MB-CZIPtestfile.org.zip";
+string file_path = "../CS330Content.zip";
+
+// string file_path = "/home/moe/Videos/Fight-Club.mp4";
+
+/*
+Fight-Club.mp4 = 1.6 GB 
+Time taken for hash_file 1442163047 nanoseconds - Md5
+Time taken for hash_file 5467367895 nanoseconds - xxHash
+
+TEST_FILE_DELETE_AFTER_500MB-CZIPtestfile.org.zip = 534 MB
+Time taken for hash_file 268907650 nanoseconds - Md5
+Time taken for hash_file 1947042984 nanoseconds - xxHash
+
+CS330Content.zip = 34.3 MB
+Time taken for hash_file 55736638 nanoseconds - Md5
+Time taken for hash_file 130292498 nanoseconds - xxHash
+ */
 
 string hash_file()
 {
