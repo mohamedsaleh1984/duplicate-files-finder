@@ -3,15 +3,17 @@
 #include <sstream>
 #include <iomanip>
 #include <filesystem>
-#include "filehelper/fileHelper.hpp"
 #include "misc/misc.hpp"
+#include "finder/finder.hpp"
+
 using namespace std;
-using namespace ns_fileHelper;
+using namespace ns_finder;
 
 int main()
 {
-    md5_hash_result s = FileHelper::calculate_md5_hash("test.txt");
-    cout << s.md5_hash << endl;
-    loading();
+    fs::path p("E:\\YouTube-Channels");
+    Finder f;
+    f.start_search(p);
+
     return 0;
 }

@@ -1,24 +1,28 @@
-libfilehelper:
+libfinder:
+	$(info    Building libfinder)
 ifeq ($(OS),Windows_NT)
-	@if not exist ./libs/libfilehelper.a ( \
-		g++ -std=c++17 -O -c ./filehelper/filehelper.cpp -o filehelper.o && \
-		ar rcs libfilehelper.a filehelper.o && \
-		del /F /Q filehelper.o && \
-		move libfilehelper.a libs\libfilehelper.a \
+	if not exist libs mkdir libs
+	@if not exist ./libs/libfinder.a ( \
+		g++ -std=c++17 -O -c ./finder/finder.cpp -o finder.o && \
+		ar rcs libfinder.a finder.o && \
+		del /F /Q finder.o && \
+		move libfinder.a libs\libfinder.a \
 	)
 else
 	mkdir -p libs
-	@if [ ! -f ./libs/libfilehelper.a ]; then \
-		g++ -std=c++17 -O -c ./filehelper/filehelper.cpp -o filehelper.o && \
-		ar rcs libfilehelper.a filehelper.o && \
-		rm -f filehelper.o && \
-		mv libfilehelper.a libs/; \
+	@if [ ! -f ./libs/libfinder.a ]; then \
+		mkdir -p libs
+		g++ -std=c++17 -O -c ./finder/finder.cpp -o finder.o && \
+		ar rcs libfinder.a finder.o && \
+		rm -f finder.o && \
+		mv libfinder.a libs/; \
 	fi
 endif
 
 libcatch:
+	$(info    Building libcatch)
 ifeq ($(OS),Windows_NT)
-
+	
 	@if not exist ./libs/libcatch.a ( \
 		g++ -std=c++17 -O -c ./catch/catch_amalgamated.cpp -o catch.o && \
 		ar rcs libcatch.a catch.o && \
@@ -40,22 +44,25 @@ else
 endif
 
 
-libs: libcatch libfilehelper
+libs: libcatch libfinder
 
 test: libs
+	$(info    Test Build)
 ifeq ($(OS),Windows_NT)
-	g++ -std=c++17 test.cpp -Ifilehlper -Icatch -Llibs -lfilehelper -lcatch -lssl -lcrypto -o test.exe
+	g++ -std=c++17 test.cpp -Ifilehlper -Icatch -Llibs -lfinder -lcatch -lssl -lcrypto -o test.exe
+	$(info    Test Run)
 	.\test.exe
 else
-	g++ -std=c++17 test.cpp -Ifilehlper -Icatch -Llibs -lfilehelper -lcatch -lssl -lcrypto -o test.out
+	g++ -std=c++17 test.cpp -Ifilehlper -Icatch -Llibs -lfinder -lcatch -lssl -lcrypto -o test.out
 	./test.out
 endif
 
-build: libfilehelper
+build: clean libfinder
+	$(info    Binary build)
 ifeq ($(OS),Windows_NT)
-	g++ -std=c++17 main.cpp -Ifilehelper -Llibs -lfilehelper -lssl -lcrypto -o main.exe -Wno-unused-parameter
+	g++ -std=c++17 main.cpp -Ifinder -Llibs -lfinder -lssl -lcrypto -o main.exe -Wno-unused-parameter
 else
-	g++ -std=c++17 main.cpp -Ifilehelper -Llibs -lfilehelper -lssl -lcrypto -o main.out -Wno-unused-parameter
+	g++ -std=c++17 main.cpp -Ifinder -Llibs -lfinder -lssl -lcrypto -o main.out -Wno-unused-parameter
 endif
 
 run: build
@@ -73,3 +80,5 @@ else
 	rm -f main.o
 	mr -f ./libs
 endif
+
+r: run
