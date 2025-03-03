@@ -3,7 +3,7 @@ Find Duplicate Files in specific directory based on file hash
 
 Install
 - Perl
-- nams
+- nasm
 - make
 
 Add both binary path to environment PATH
@@ -11,7 +11,7 @@ Add both binary path to environment PATH
 Follow Openssl Install Instructions
 [OpenSSL](https://github.com/openssl/openssl/tree/openssl-3.4)
 
-* Should find OpenSSL in Program Files
+* Should find OpenSSL in Program Files for windows
 
 | Dir | Content   
 | :---:   | :---: 
@@ -19,6 +19,11 @@ Follow Openssl Install Instructions
 | include | headers for OpenSSL
 | html | documentation
 | lib | link library dir
+
+* OpenSSL for Linux
+```
+sudo apt-get install libssl-dev
+```
 
 * for VSCode add dir .vscode and create new file ```c_cpp_properties.json```
 
