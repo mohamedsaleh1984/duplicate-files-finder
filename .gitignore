@@ -1,6 +1,8 @@
 *.exe
 *.bin
 main.exe
+main.out
 test.txt
+test.out
 *.o
 *.a
