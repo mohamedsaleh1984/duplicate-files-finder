@@ -49,20 +49,20 @@ libs: libcatch libfinder
 test: libs
 	$(info    Test Build)
 ifeq ($(OS),Windows_NT)
-	g++ -std=c++17 test.cpp -Ifilehlper -Icatch -Llibs -lfinder -lcatch -lssl -lcrypto -o test.exe
+	g++ -std=c++17 test.cpp -Ifilehlper -Icatch -Llibs -lfinder -lcatch -lssl -lcrypto -lxxhash -o test.exe
 	$(info    Test Run)
 	.\test.exe
 else
-	g++ -std=c++17 test.cpp -Ifilehlper -Icatch -Llibs -lfinder -lcatch -lssl -lcrypto -o test.out
+	g++ -std=c++17 test.cpp -Ifilehlper -Icatch -Llibs -lfinder -lcatch -lssl -lcrypto -lxxhash -o test.out
 	./test.out
 endif
 
-build: clean libfinder
+build: libfinder
 	$(info    Binary build)
 ifeq ($(OS),Windows_NT)
-	g++ -std=c++17 main.cpp -Ifinder -Llibs -lfinder -lssl -lcrypto -o main.exe -Wno-unused-parameter -Wno-deprecated-declarations
+	g++ -std=c++17 main.cpp -Ifinder -Llibs -lfinder -lssl -lcrypto -lxxhash main.exe -Wno-unused-parameter -Wno-deprecated-declarations
 else
-	g++ -std=c++17 main.cpp -Ifinder -Llibs -lfinder -lssl -lcrypto -o main.out -Wno-unused-parameter -Wdeprecated-declarations
+	g++ -std=c++17 main.cpp -Ifinder -Llibs -lfinder -lssl -lcrypto -lxxhash -o main.out -Wno-unused-parameter -Wdeprecated-declarations
 endif
 
 run: build

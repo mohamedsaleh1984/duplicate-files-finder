@@ -50,6 +50,17 @@ sudo apt-get install libssl-dev
     "version": 4
 }
 ```
+#### Installing xxhash for linux env
+```
+sudo apt install xxhash
+
+sudo add-apt-repository ppa:reviczky/xxhash
+
+sudo apt remove --autoremove xxhash
+
+sudo add-apt-repository --remove ppa:reviczky/xxhash
+
+```
 
 
 build

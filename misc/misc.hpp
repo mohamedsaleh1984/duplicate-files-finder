@@ -34,4 +34,29 @@ void loading()
     }
 }
 
+
+template<typename Func, typename ... Args>
+auto measureExecutionTime(Func &&func, Args &&... args) {
+	auto start = std::chrono::high_resolution_clock::now();
+
+	// void function
+	if constexpr (std::is_void_v<std::invoke_result_t<Func, Args...>>) {
+		// Handle void return type
+		std::invoke(std::forward<Func>(func), std::forward<Args>(args)...);
+		auto end = std::chrono::high_resolution_clock::now();
+		auto milliseconds =
+				std::chrono::duration_cast<std::chrono::nanoseconds>(
+						end - start);
+		return milliseconds; // Only return the duration for void functions
+	} else {
+		// Handle non-void return type
+		auto result = std::invoke(std::forward<Func>(func),
+				std::forward<Args>(args)...);
+		auto end = std::chrono::high_resolution_clock::now();
+		auto milliseconds =
+				std::chrono::duration_cast<std::chrono::nanoseconds>(
+						end - start);
+		return std::make_pair(result, milliseconds); // Return result and duration
+	}
+}
 #endif
