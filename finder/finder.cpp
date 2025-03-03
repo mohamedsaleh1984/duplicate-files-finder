@@ -42,23 +42,22 @@ void Finder::start_search(fs::path root)
         string filePath = f.generic_string();
         cout << "Path:" << filePath << endl;
 
-        md5_hash_result hashResult = calculate_md5_hash(filePath);
+        string hashResult = calculate_hash(filePath);
 
-        if (hashResult.has_error)
+        if (hashResult == "")
         {
-            cout << "error " << hashResult.error_message << endl;
-            // log
+            cout << "error hash is empty" << endl;
             continue;
         }
 
         //    cout << "hash " << hashResult.md5_hash << endl;
 
-        it = _findings.find(hashResult.md5_hash);
+        it = _findings.find(hashResult);
         if (it != _findings.end())
         {
             // found
-            _findings[hashResult.md5_hash].push_back(f);
-            cout << "found hash " << hashResult.md5_hash << endl;
+            _findings[hashResult].push_back(f);
+            cout << "found hash " << hashResult<< endl;
         }
         else
         {
@@ -67,11 +66,11 @@ void Finder::start_search(fs::path root)
             vector<fs::path> paths;
             paths.push_back(f);
 
-            elem.first = hashResult.md5_hash;
+            elem.first = hashResult;
             elem.second = paths;
 
             _findings.insert(elem);
-            cout << "New hash " << hashResult.md5_hash << endl;
+            cout << "New hash " << hashResult<< endl;
         }
     }
 
@@ -79,52 +78,12 @@ void Finder::start_search(fs::path root)
 }
 
 /// @brief Calculate MD5 has for file
-struct md5_hash_result Finder::
-    calculate_md5_hash(const std::string &file_path)
+string Finder::
+    calculate_hash(const std::string &file_path)
 {
-    struct md5_hash_result res;
-    MD5_CTX md5Context;
-    MD5_Init(&md5Context);
-
-    // read file content
-    std::ifstream file(file_path, std::ios::binary);
-    if (!file.is_open())
-    {
-        res.has_error = true;
-        res.error_message = "Error opening file.";
-        return res;
-    }
-
-    char buffer[BUFFER_SIZE];
-    while (file.read(buffer, sizeof(buffer)))
-    {
-        MD5_Update(&md5Context, buffer, file.gcount());
-    }
-
-    if (file.fail() && !file.eof())
-    {
-        res.has_error = true;
-        res.error_message = "Error read file.";
-        return res;
-    }
-
-    unsigned char hash[MD5_DIGEST_LENGTH];
-
-    MD5_Final(hash, &md5Context);
-
-    std::stringstream ss;
-    for (unsigned char i : hash)
-        ss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(i);
-
-    if (ss.str().length() == 0)
-    {
-        res.has_error = true;
-        res.error_message = "Error calculating MD5 hash";
-        return res;
-    }
-
-    res.md5_hash = ss.str();
-    //  cout << "md5 " << res.md5_hash << endl;
+    fs::path p = file_path;
+    size_t hash_value = fs::hash_value(p);
+    string res =  to_string(hash_value);
     return res;
 }
 
