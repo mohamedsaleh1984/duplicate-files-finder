@@ -1,7 +1,7 @@
 libfinder:
-	$(info    Building libfinder)
 ifeq ($(OS),Windows_NT)
-	if not exist libs mkdir libs
+	$(info    Building libfinder windows)
+	@if not exist libs mkdir libs
 	@if not exist ./libs/libfinder.a ( \
 		g++ -std=c++17 -O -c ./finder/finder.cpp -o finder.o && \
 		ar rcs libfinder.a finder.o && \
@@ -9,13 +9,13 @@ ifeq ($(OS),Windows_NT)
 		move libfinder.a libs\libfinder.a \
 	)
 else
-	mkdir -p libs
+	$(info    Building libfinder linux)
 	@if [ ! -f ./libs/libfinder.a ]; then \
-		mkdir -p libs
+		mkdir -p libs && \
 		g++ -std=c++17 -O -c ./finder/finder.cpp -o finder.o && \
 		ar rcs libfinder.a finder.o && \
 		rm -f finder.o && \
-		mv libfinder.a libs/; \
+		mv libfinder.a libs/ ; \
 	fi
 endif
 
@@ -78,7 +78,7 @@ ifeq ($(OS),Windows_NT)
 	del /F /Q libs
 else
 	rm -f main.o
-	mr -f ./libs
+	rm -r -f ./libs
 endif
 
 r: run
