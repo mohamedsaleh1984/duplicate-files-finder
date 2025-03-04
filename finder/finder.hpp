@@ -32,7 +32,7 @@ namespace ns_finder
         void post_search();
         void pre_search();
         /// @brief Calculate MD5 has for file
-          string calculate_hash(const std::string &file_path);
+        string calculate_hash(const std::string &file_path);
         /// @brief Printout directiorys for desired path
         /// @param path
         void print_directories(const fs::path &path);
@@ -49,12 +49,13 @@ namespace ns_finder
         /// @brief Return list of files in Dirs directories
         /// @param dirs
         /// @return
-        vector<fs::path> getFiles(vector<fs::path> &dirs);
+        void getFiles(vector<fs::path> &dirs);
 
     private:
         fs::path _root;
         vector<fs::path> _files;
         map<string, vector<fs::path>> _findings;
+        bool _searchStarted;
     };
 }
 

@@ -6,12 +6,56 @@ Finder::Finder()
 
 void Finder::pre_search()
 {
-    cout << "Pre-Search..." << endl;
+    cout << "Search Process Started...";
 }
 
 void Finder::post_search()
 {
-    cout << "Post-Search..." << endl;
+    _searchStarted = false;
+    std::ofstream myFile("stat.txt");
+    if (myFile.is_open())
+    {
+        for (map<string, vector<fs::path>>::iterator it = _findings.begin(); it != _findings.end(); ++it)
+        {
+            myFile << it->first << endl;
+            for (auto &file : it->second)
+            {
+                myFile << "\t" << file << endl;
+            }
+        }
+
+        // Close the file
+        myFile.close();
+
+        std::cout << "Successfully wrote to the file." << std::endl;
+    }
+    else
+    {
+        std::cerr << "Unable to open file." << std::endl;
+    }
+    cout << "Search Process Finished...";
+
+    // stat
+    int totalFiles = 0;
+    int totalDuplicate = 0;
+    uintmax_t totalDuplicateSize = 0;
+    for (map<string, vector<fs::path>>::iterator it = _findings.begin(); it != _findings.end(); ++it)
+    {
+        std::uintmax_t fileSize = std::filesystem::file_size(it->second[0]);
+
+        if (it->second.size() > 1)
+        {
+            int dupFileCount = it->second.size() - 1;
+            totalDuplicateSize += (dupFileCount * fileSize);
+            totalDuplicate += dupFileCount;
+        }
+
+        totalFiles += it->second.size();
+    }
+
+    cout << "Total Number of files " << totalFiles << endl;
+    cout << "Total Duplicate Files " << totalDuplicate << endl;
+    cout << "Duplicate Space " << totalDuplicateSize << endl;
 }
 
 void Finder::start_search(fs::path root)
@@ -31,16 +75,18 @@ void Finder::start_search(fs::path root)
 
     vector<fs::path> dirs;
     getDirectories(_root, dirs);
+
+    dirs.push_back(_root);
     getFiles(dirs);
 
-    //  cout << "Start-Hashing processs - Files Count " << files.size() << endl;
+    cout << "Start-Hashing processs - Files Count " << _files.size() << endl;
 
     map<string, vector<fs::path>>::iterator it;
 
     for (const auto &f : _files)
     {
         string filePath = f.generic_string();
-        cout << "Path:" << filePath << endl;
+        // cout << "Path:" << filePath << endl;
 
         string hashResult = calculate_hash(filePath);
 
@@ -57,7 +103,7 @@ void Finder::start_search(fs::path root)
         {
             // found
             _findings[hashResult].push_back(f);
-            cout << "found hash " << hashResult<< endl;
+            // cout << "found hash " << hashResult << endl;
         }
         else
         {
@@ -70,7 +116,7 @@ void Finder::start_search(fs::path root)
             elem.second = paths;
 
             _findings.insert(elem);
-            cout << "New hash " << hashResult<< endl;
+            // cout << "New hash " << hashResult << endl;
         }
     }
 
@@ -83,7 +129,7 @@ string Finder::
 {
     fs::path p = file_path;
     size_t hash_value = fs::hash_value(p);
-    string res =  to_string(hash_value);
+    string res = to_string(hash_value);
     return res;
 }
 
@@ -106,6 +152,7 @@ void Finder::print_directories(const fs::path &path)
 /// @param dirsOut
 void Finder::getDirectories(const fs::path &root, vector<fs::path> &dirsOut)
 {
+
     for (const auto &entry : fs::directory_iterator(root))
     {
         if (fs::is_directory(entry))
@@ -137,28 +184,17 @@ void Finder::print_files(vector<fs::path> &dirs)
 /// @brief Return list of files in Dirs directories
 /// @param dirs
 /// @return
-vector<fs::path> Finder::getFiles(vector<fs::path> &dirs)
+void Finder::getFiles(vector<fs::path> &dirs)
 {
-    struct stat sb;
+    _files.clear();
     for (const auto &entry : dirs)
     {
         for (const auto &entry : fs::directory_iterator(entry))
         {
-            // Converting the path to const char * in the
-            // subsequent lines
-            std::filesystem::path outfilename = entry.path();
-            std::string outfilename_str = outfilename.string();
-            const char *path = outfilename_str.c_str();
-
-            // Testing whether the path points to a
-            // non-directory or not If it does, displays path
-            if (stat(path, &sb) == 0 && !(sb.st_mode & S_IFDIR))
+            if (fs::is_regular_file(entry))
             {
-                // cout << path << endl;
-                // std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-                _files.push_back(path);
+                _files.push_back(entry);
             }
         }
     }
-    return _files;
 }
