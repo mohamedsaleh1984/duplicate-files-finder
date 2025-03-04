@@ -7,6 +7,7 @@
 #include <climits>
 #include <algorithm>
 #include <cassert>
+#include <vector>
 #include "misc/misc.hpp"
 #include "finder/finder.hpp"
 #include "xxhash/xxhash.h"
@@ -69,7 +70,7 @@ string hash_file_md5()
 
 int main(int argc, char **argv)
 {
-    vector<stringh> files = {
+    std::vector<std::string> files = {
         "Z:\\Binary Tree Questions for Technical Interviews - Google, Facebook, Amazon, Microsoft",
         "Z :\\Google Drive Videos\\IMG_4967.MOV",
         "Z :\\Google Drive Videos\\IMG_5359.MOV",
