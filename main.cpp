@@ -20,7 +20,7 @@ string file_path = "../CS330Content.zip";
 // string file_path = "/home/moe/Videos/Fight-Club.mp4";
 
 /*
-Fight-Club.mp4 = 1.6 GB 
+Fight-Club.mp4 = 1.6 GB
 Time taken for hash_file 1442163047 nanoseconds - Md5
 Time taken for hash_file 5467367895 nanoseconds - xxHash
 
@@ -69,28 +69,20 @@ string hash_file_md5()
 
 int main(int argc, char **argv)
 {
-    auto r1 = measureExecutionTime(hash_file);
-    cout << "Time taken for hash_file " << r1.second.count() << " nanoseconds - Md5" << endl;
-    auto r2 = measureExecutionTime(hash_file_md5);
-    cout << "Time taken for hash_file " << r2.second.count() << " nanoseconds - xxHash" << endl;
-    
+    vector<fs::path> files = {
+        "Z:\\Binary Tree Questions for Technical Interviews - Google, Facebook, Amazon, Microsoft",
+        "Z :\\Google Drive Videos\\IMG_4967.MOV",
+        "Z :\\Google Drive Videos\\IMG_5359.MOV",
+    };
+
+    for (auto f : files)
+    {
+        file_path = f.generic_format();
+        auto r1 = measureExecutionTime(hash_file_md5);
+        cout << "Time taken for hash_file " << r1.second.count() << " nanoseconds - Md5" << endl;
+        auto r2 = measureExecutionTime(hash_file);
+        cout << "Time taken for hash_file " << r2.second.count() << " nanoseconds - xxHash" << endl;
+    }
+
     return 0;
-}
-
-void temp()
-{
-    // Finder f;
-
-    // struct md5_hash_result result = f.calculate_md5_hash(file_path);
-    // if (result.has_error)
-    // {
-    //     cout << result.error_message << endl;
-    // }
-    // else
-    // {
-    //     cout << result.md5_hash << endl;
-    // }
-
-    // string shash = hash_file(file_path);
-    // cout << shash << endl;
 }
