@@ -69,7 +69,7 @@ string hash_file_md5()
 
 int main(int argc, char **argv)
 {
-    vector<fs::path> files = {
+    vector<stringh> files = {
         "Z:\\Binary Tree Questions for Technical Interviews - Google, Facebook, Amazon, Microsoft",
         "Z :\\Google Drive Videos\\IMG_4967.MOV",
         "Z :\\Google Drive Videos\\IMG_5359.MOV",
@@ -77,7 +77,7 @@ int main(int argc, char **argv)
 
     for (auto f : files)
     {
-        file_path = f.generic_format();
+        file_path = f;
         auto r1 = measureExecutionTime(hash_file_md5);
         cout << "Time taken for hash_file " << r1.second.count() << " nanoseconds - Md5" << endl;
         auto r2 = measureExecutionTime(hash_file);
