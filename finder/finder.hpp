@@ -9,7 +9,6 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
-#include <openssl/md5.h>
 #include <filesystem>
 #include <vector>
 #include <string>
@@ -57,9 +56,6 @@ namespace ns_finder
         /// @brief Search
         /// @param root
         void start_search(fs::path root);
-
-        /// @brief Calculate MD5 has for file
-        struct hash_result calculate_md5_hash(const std::string &file_path);
 
         /// @brief Get directories in root
         /// @param root

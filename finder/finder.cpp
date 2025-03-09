@@ -174,56 +174,6 @@ void Finder::start_search(fs::path root)
     post_search();
 }
 
-/// @brief Calculate MD5 has for file
-struct hash_result Finder::
-    calculate_md5_hash(const std::string &file_path)
-{
-    struct hash_result res;
-    MD5_CTX md5Context;
-    MD5_Init(&md5Context);
-
-    // read file content
-    std::ifstream file(file_path, std::ios::binary);
-    if (!file.is_open())
-    {
-        res.has_error = true;
-        res.error_message = "Error opening file.";
-        return res;
-    }
-
-    char buffer[BUFFER_SIZE];
-    while (file.read(buffer, sizeof(buffer)))
-    {
-        MD5_Update(&md5Context, buffer, file.gcount());
-    }
-
-    if (file.fail() && !file.eof())
-    {
-        res.has_error = true;
-        res.error_message = "Error read file.";
-        return res;
-    }
-
-    unsigned char hash[MD5_DIGEST_LENGTH];
-
-    MD5_Final(hash, &md5Context);
-
-    std::stringstream ss;
-    for (unsigned char i : hash)
-        ss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(i);
-
-    if (ss.str().length() == 0)
-    {
-        res.has_error = true;
-        res.error_message = "Error calculating MD5 hash";
-        return res;
-    }
-
-    res.hash = ss.str();
-    //  cout << "md5 " << res.md5_hash << endl;
-    return res;
-}
-
 /// @brief Get directories in root
 /// @param root
 /// @param dirsOut
