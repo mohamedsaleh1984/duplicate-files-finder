@@ -40,7 +40,7 @@ int main(int argc, char **argv)
         }
         else
         {
-            std::cerr << "Usage: program dir_location\n";
+            std::cerr << "Usage: ./main.exe dir_location\n";
             bfetch = false;
         }
     }

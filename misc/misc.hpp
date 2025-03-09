@@ -75,4 +75,14 @@ auto measureExecutionTime(Func &&func, Args &&...args)
 
     return result; // Return function result if needed
 }
+
+void printUsage(const std::string &programName)
+{
+    std::cerr << "Usage: " << programName << " [options] arguments\n";
+    std::cerr << "Options:\n";
+    std::cerr << "  -d, --delete       Delete duplicates without asking\n";
+    std::cerr << "  -v, --view        Show duplicate files paths\n";
+    std::cerr << "Arguments:\n";
+    std::cerr << "  input_directory      Path to the root directory\n";
+}
 #endif
