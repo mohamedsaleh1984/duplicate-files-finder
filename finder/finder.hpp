@@ -19,17 +19,19 @@
 #include <stdexcept>
 #include <thread>
 #include <chrono>
+#include "../xxhash/xxhash.h"
 using namespace std;
 namespace fs = std::filesystem;
 
 namespace ns_finder
 {
+    const unsigned long int CHUNK_SIZE = 8192;
     const unsigned long int BUFFER_SIZE = 4096;
     /// @brief Retain error information.
-    struct md5_hash_result
+    struct hash_result
     {
         // mdf hash value
-        string md5_hash;
+        string hash;
         // error message if there has error
         string error_message;
         // error indicator
@@ -44,7 +46,7 @@ namespace ns_finder
         void post_search();
         void pre_search();
         /// @brief Calculate MD5 has for file
-        struct md5_hash_result calculate_md5_hash(const std::string &file_path);
+        struct hash_result calculate_md5_hash(const std::string &file_path);
         /// @brief Printout directiorys for desired path
         /// @param path
         void print_directories(const fs::path &path);
@@ -62,6 +64,8 @@ namespace ns_finder
         /// @param dirs
         /// @return
         vector<fs::path> getFiles(vector<fs::path> &dirs);
+
+        struct hash_result calculate_xxhash(const std::string &file_path);
 
     private:
         fs::path _root;

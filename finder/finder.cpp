@@ -42,7 +42,7 @@ void Finder::start_search(fs::path root)
         string filePath = f.generic_string();
         cout << "Path:" << filePath << endl;
 
-        md5_hash_result hashResult = calculate_md5_hash(filePath);
+        hash_result hashResult = calculate_md5_hash(filePath);
 
         if (hashResult.has_error)
         {
@@ -53,12 +53,12 @@ void Finder::start_search(fs::path root)
 
         //    cout << "hash " << hashResult.md5_hash << endl;
 
-        it = _findings.find(hashResult.md5_hash);
+        it = _findings.find(hashResult.hash);
         if (it != _findings.end())
         {
             // found
-            _findings[hashResult.md5_hash].push_back(f);
-            cout << "found hash " << hashResult.md5_hash << endl;
+            _findings[hashResult.hash].push_back(f);
+            cout << "found hash " << hashResult.hash << endl;
         }
         else
         {
@@ -67,11 +67,11 @@ void Finder::start_search(fs::path root)
             vector<fs::path> paths;
             paths.push_back(f);
 
-            elem.first = hashResult.md5_hash;
+            elem.first = hashResult.hash;
             elem.second = paths;
 
             _findings.insert(elem);
-            cout << "New hash " << hashResult.md5_hash << endl;
+            cout << "New hash " << hashResult.hash << endl;
         }
     }
 
@@ -79,10 +79,10 @@ void Finder::start_search(fs::path root)
 }
 
 /// @brief Calculate MD5 has for file
-struct md5_hash_result Finder::
+struct hash_result Finder::
     calculate_md5_hash(const std::string &file_path)
 {
-    struct md5_hash_result res;
+    struct hash_result res;
     MD5_CTX md5Context;
     MD5_Init(&md5Context);
 
@@ -123,7 +123,7 @@ struct md5_hash_result Finder::
         return res;
     }
 
-    res.md5_hash = ss.str();
+    res.hash = ss.str();
     //  cout << "md5 " << res.md5_hash << endl;
     return res;
 }
@@ -202,4 +202,33 @@ vector<fs::path> Finder::getFiles(vector<fs::path> &dirs)
         }
     }
     return _files;
+}
+
+struct hash_result Finder::calculate_xxhash(const std::string &file_path)
+{
+    struct hash_result res;
+    const char *p = file_path.c_str();
+    FILE *file = fopen(p, "rb");
+    if (!file)
+    {
+        res.has_error = true;
+        res.error_message = "Error opening file.";
+        return res;
+    }
+
+    XXH64_state_t *state = XXH64_createState();
+    XXH64_reset(state, 0); // Seed = 0
+
+    unsigned char buffer[CHUNK_SIZE];
+    size_t bytes_read;
+    while ((bytes_read = fread(buffer, 1, CHUNK_SIZE, file)) > 0)
+    {
+        XXH64_update(state, buffer, bytes_read);
+    }
+
+    fclose(file);
+    XXH64_hash_t hash = XXH64_digest(state);
+    XXH64_freeState(state);
+    res.hash = to_string(hash);
+    return res;
 }
