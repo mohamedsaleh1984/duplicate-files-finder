@@ -11,7 +11,10 @@ void Finder::pre_search()
 
 void Finder::post_search()
 {
-    cout << "Post-Search..." << endl;
+    cout << "Total files " << total_files() << endl;
+    cout << "Total file size " << total_files_size() << endl;
+    cout << "Total Duplicate files " << total_duplicate_files_count() << endl;
+    cout << "Total Duplicate files size " << total_duplicate_files_size() << endl;
 }
 
 int Finder::total_files()
