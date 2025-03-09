@@ -14,6 +14,54 @@ void Finder::post_search()
     cout << "Post-Search..." << endl;
 }
 
+int Finder::total_files()
+{
+    return this->_files.size();
+}
+unsigned long int Finder::total_duplicate_files_count()
+{
+    unsigned long int count = 0;
+    map<string, vector<fs::path>>::iterator it = _findings.begin();
+    while (it != _findings.end())
+        count += it->second.size() - 1;
+    return count;
+}
+
+unsigned long long Finder::total_files_size()
+{
+    unsigned long long size = 0;
+    map<string, vector<fs::path>>::iterator it = _findings.begin();
+    while (it != _findings.end())
+    {
+        vector<fs::path> files_per_key = it->second;
+        for (const auto &filePath : files_per_key)
+            size += static_cast<unsigned long long>(fs::file_size(filePath));
+    }
+
+    return size;
+}
+
+unsigned long long Finder::total_duplicate_files_size()
+{
+    unsigned long long size = 0;
+    map<string, vector<fs::path>>::iterator it = _findings.begin();
+    while (it != _findings.end())
+    {
+        vector<fs::path> files = it->second;
+        if (files.size() > 1)
+        {
+            unsigned long long sfile = static_cast<unsigned long long>(fs::file_size(files.at(0)));
+            unsigned long long wasted_space = files.size() - 1 * sfile;
+            size += wasted_space;
+        }
+    }
+    return size;
+}
+
+void Finder::delete_duplicate_files()
+{
+}
+
 void Finder::start_search(fs::path root)
 {
     if (root.generic_string().length() == 0)
@@ -33,32 +81,25 @@ void Finder::start_search(fs::path root)
     getDirectories(_root, dirs);
     getFiles(dirs);
 
-    //  cout << "Start-Hashing processs - Files Count " << files.size() << endl;
-
     map<string, vector<fs::path>>::iterator it;
 
     for (const auto &f : _files)
     {
         string filePath = f.generic_string();
-        cout << "Path:" << filePath << endl;
-
-        hash_result hashResult = calculate_md5_hash(filePath);
-
+        // cout << "Path:" << filePath << endl;
+        hash_result hashResult = calculate_xxhash(filePath);
         if (hashResult.has_error)
         {
             cout << "error " << hashResult.error_message << endl;
-            // log
             continue;
         }
-
-        //    cout << "hash " << hashResult.md5_hash << endl;
 
         it = _findings.find(hashResult.hash);
         if (it != _findings.end())
         {
             // found
             _findings[hashResult.hash].push_back(f);
-            cout << "found hash " << hashResult.hash << endl;
+            // cout << "found hash " << hashResult.hash << endl;
         }
         else
         {
@@ -71,7 +112,6 @@ void Finder::start_search(fs::path root)
             elem.second = paths;
 
             _findings.insert(elem);
-            cout << "New hash " << hashResult.hash << endl;
         }
     }
 
@@ -130,17 +170,17 @@ struct hash_result Finder::
 
 /// @brief Printout directiorys for desired path
 /// @param path
-void Finder::print_directories(const fs::path &path)
-{
-    for (const auto &entry : fs::directory_iterator(path))
-    {
-        if (fs::is_directory(entry))
-        {
-            std::cout << entry.path() << std::endl;
-            print_directories(entry.path()); // Recursive call for subdirectories
-        }
-    }
-}
+// void Finder::print_directories(const fs::path &path)
+// {
+//     for (const auto &entry : fs::directory_iterator(path))
+//     {
+//         if (fs::is_directory(entry))
+//         {
+//             std::cout << entry.path() << std::endl;
+//             print_directories(entry.path()); // Recursive call for subdirectories
+//         }
+//     }
+// }
 
 /// @brief Get directories in root
 /// @param root
@@ -159,21 +199,21 @@ void Finder::getDirectories(const fs::path &root, vector<fs::path> &dirsOut)
 
 /// @brief Printout file in specific dirs.
 /// @param dirs
-void Finder::print_files(vector<fs::path> &dirs)
-{
-    vector<fs::path> files;
+// void Finder::print_files(vector<fs::path> &dirs)
+// {
+//     vector<fs::path> files;
 
-    for (const auto &entry : dirs)
-    {
-        for (const auto &entry : fs::directory_iterator(entry))
-        {
-            if (fs::is_regular_file(entry))
-            {
-                std::cout << entry.path().filename().string() << std::endl;
-            }
-        }
-    }
-}
+//     for (const auto &entry : dirs)
+//     {
+//         for (const auto &entry : fs::directory_iterator(entry))
+//         {
+//             if (fs::is_regular_file(entry))
+//             {
+//                 std::cout << entry.path().filename().string() << std::endl;
+//             }
+//         }
+//     }
+// }
 
 /// @brief Return list of files in Dirs directories
 /// @param dirs
@@ -204,6 +244,7 @@ vector<fs::path> Finder::getFiles(vector<fs::path> &dirs)
     return _files;
 }
 
+/// @brief Calculate hash using xxhash
 struct hash_result Finder::calculate_xxhash(const std::string &file_path)
 {
     struct hash_result res;

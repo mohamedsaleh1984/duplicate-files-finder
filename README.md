@@ -70,7 +70,7 @@ make build
 
 run
 ```
-make r
+make run
 ```
 
 test

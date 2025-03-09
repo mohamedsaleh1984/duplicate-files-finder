@@ -40,16 +40,24 @@ namespace ns_finder
 
     class Finder
     {
+    private:
+        int total_files();
+        unsigned long long total_files_size();
+        unsigned long int total_duplicate_files_count();
+        unsigned long long total_duplicate_files_size();
+        void delete_duplicate_files();
+        void post_search();
+        void pre_search();
+
     public:
         Finder();
         void start_search(fs::path root);
-        void post_search();
-        void pre_search();
+
         /// @brief Calculate MD5 has for file
         struct hash_result calculate_md5_hash(const std::string &file_path);
         /// @brief Printout directiorys for desired path
         /// @param path
-        void print_directories(const fs::path &path);
+        // void print_directories(const fs::path &path);
 
         /// @brief Get directories in root
         /// @param root
@@ -58,7 +66,7 @@ namespace ns_finder
 
         /// @brief Printout file in specific dirs.
         /// @param dirs
-        void print_files(vector<fs::path> &dirs);
+        // void print_files(vector<fs::path> &dirs);
 
         /// @brief Return list of files in Dirs directories
         /// @param dirs

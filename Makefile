@@ -110,7 +110,6 @@ else
 	rm -r -f ./libs
 endif
 
-r: run
 
 
 
