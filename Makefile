@@ -85,7 +85,7 @@ else
 	./test.out
 endif
 
-build: libfinder libxxhash
+build: clean libfinder libxxhash
 	$(info    Binary build)
 ifeq ($(OS),Windows_NT)
 	g++ -std=c++17 main.cpp -Ifinder -Llibs -lfinder -lssl -lcrypto -lxxhash -o main.exe -Wno-unused-parameter -Wno-deprecated-declarations

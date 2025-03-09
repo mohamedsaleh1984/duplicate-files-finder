@@ -1,32 +1,38 @@
 #include "finder.hpp"
 using namespace ns_finder;
+
 Finder::Finder()
 {
 }
 
 void Finder::pre_search()
 {
-    cout << "Pre-Search..." << endl;
+    // cout << "Pre-Search..." << endl;
 }
 
 void Finder::post_search()
 {
-    cout << "Total files " << total_files() << endl;
-    cout << "Total file size " << total_files_size() << endl;
-    cout << "Total Duplicate files " << total_duplicate_files_count() << endl;
-    cout << "Total Duplicate files size " << total_duplicate_files_size() << endl;
+    cout << "Total files : " << total_files() << endl;
+    cout << "Total file size : " << bytesToSize(total_files_size()) << endl;
+    cout << "Total Duplicate files : " << total_duplicate_files_count() << endl;
+    cout << "Total Duplicate files size : " << bytesToSize(total_duplicate_files_size()) << endl;
 }
 
 int Finder::total_files()
 {
     return this->_files.size();
 }
+
 unsigned long int Finder::total_duplicate_files_count()
 {
     unsigned long int count = 0;
     map<string, vector<fs::path>>::iterator it = _findings.begin();
     while (it != _findings.end())
+    {
         count += it->second.size() - 1;
+        it++;
+    }
+
     return count;
 }
 
@@ -39,6 +45,8 @@ unsigned long long Finder::total_files_size()
         vector<fs::path> files_per_key = it->second;
         for (const auto &filePath : files_per_key)
             size += static_cast<unsigned long long>(fs::file_size(filePath));
+
+        it++;
     }
 
     return size;
@@ -46,19 +54,20 @@ unsigned long long Finder::total_files_size()
 
 unsigned long long Finder::total_duplicate_files_size()
 {
-    unsigned long long size = 0;
+    unsigned long long total_wasted_space = 0;
     map<string, vector<fs::path>>::iterator it = _findings.begin();
     while (it != _findings.end())
     {
         vector<fs::path> files = it->second;
         if (files.size() > 1)
         {
-            unsigned long long sfile = static_cast<unsigned long long>(fs::file_size(files.at(0)));
-            unsigned long long wasted_space = files.size() - 1 * sfile;
-            size += wasted_space;
+            unsigned long sfile = static_cast<unsigned long>(fs::file_size(files.at(0)));
+            int wasted_space = (files.size() - 1) * sfile;
+            total_wasted_space += wasted_space;
         }
+        it++;
     }
-    return size;
+    return total_wasted_space;
 }
 
 void Finder::delete_duplicate_files()
@@ -80,7 +89,9 @@ void Finder::start_search(fs::path root)
     _root = root;
     pre_search();
 
-    vector<fs::path> dirs;
+    vector<fs::path> dirs = {};
+    dirs.push_back(root);
+
     getDirectories(_root, dirs);
     getFiles(dirs);
 
@@ -171,20 +182,6 @@ struct hash_result Finder::
     return res;
 }
 
-/// @brief Printout directiorys for desired path
-/// @param path
-// void Finder::print_directories(const fs::path &path)
-// {
-//     for (const auto &entry : fs::directory_iterator(path))
-//     {
-//         if (fs::is_directory(entry))
-//         {
-//             std::cout << entry.path() << std::endl;
-//             print_directories(entry.path()); // Recursive call for subdirectories
-//         }
-//     }
-// }
-
 /// @brief Get directories in root
 /// @param root
 /// @param dirsOut
@@ -199,24 +196,6 @@ void Finder::getDirectories(const fs::path &root, vector<fs::path> &dirsOut)
         }
     }
 }
-
-/// @brief Printout file in specific dirs.
-/// @param dirs
-// void Finder::print_files(vector<fs::path> &dirs)
-// {
-//     vector<fs::path> files;
-
-//     for (const auto &entry : dirs)
-//     {
-//         for (const auto &entry : fs::directory_iterator(entry))
-//         {
-//             if (fs::is_regular_file(entry))
-//             {
-//                 std::cout << entry.path().filename().string() << std::endl;
-//             }
-//         }
-//     }
-// }
 
 /// @brief Return list of files in Dirs directories
 /// @param dirs
@@ -275,4 +254,20 @@ struct hash_result Finder::calculate_xxhash(const std::string &file_path)
     XXH64_freeState(state);
     res.hash = to_string(hash);
     return res;
+}
+
+std::string Finder::bytesToSize(unsigned long long bytes)
+{
+    const std::string sizes[] = {"Bytes", "KB", "MB", "GB", "TB"};
+    if (bytes == 0)
+        return "n/a";
+
+    int i = static_cast<int>(std::floor(std::log(bytes) / std::log(1024)));
+    if (i == 0)
+        return std::to_string(bytes) + " " + sizes[i];
+
+    char result[20];
+    std::sprintf(result, "%.1f %s", bytes / std::pow(1024, i), sizes[i].c_str());
+
+    return std::string(result);
 }

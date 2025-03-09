@@ -19,6 +19,7 @@
 #include <stdexcept>
 #include <thread>
 #include <chrono>
+#include <cmath>
 #include "../xxhash/xxhash.h"
 using namespace std;
 namespace fs = std::filesystem;
@@ -48,25 +49,21 @@ namespace ns_finder
         void delete_duplicate_files();
         void post_search();
         void pre_search();
+        std::string bytesToSize(unsigned long long bytes);
 
     public:
         Finder();
+        /// @brief Search
+        /// @param root
         void start_search(fs::path root);
 
         /// @brief Calculate MD5 has for file
         struct hash_result calculate_md5_hash(const std::string &file_path);
-        /// @brief Printout directiorys for desired path
-        /// @param path
-        // void print_directories(const fs::path &path);
 
         /// @brief Get directories in root
         /// @param root
         /// @param dirsOut
         void getDirectories(const fs::path &root, vector<fs::path> &dirsOut);
-
-        /// @brief Printout file in specific dirs.
-        /// @param dirs
-        // void print_files(vector<fs::path> &dirs);
 
         /// @brief Return list of files in Dirs directories
         /// @param dirs
