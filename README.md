@@ -1,5 +1,5 @@
 # Duplicate Files Finder
-Find Duplicate Files in specific directory based on file hash
+Cross platform tool to find duplicate files based on file hash using fast hashing algorithm xxhash.
 
 Install
 - Perl
@@ -70,7 +70,7 @@ make build
 
 run
 ```
-make run
+make r
 ```
 
 test

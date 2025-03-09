@@ -1,12 +1,14 @@
 libfinder:
+	$(info    Building libfinder)
 ifeq ($(OS),Windows_NT)
-	$(info    Building libfinder windows)
 	@if not exist libs mkdir libs
 	@if not exist ./libs/libfinder.a ( \
 		g++ -std=c++17 -O -c ./finder/finder.cpp -o finder.o && \
 		ar rcs libfinder.a finder.o && \
 		del /F /Q finder.o && \
 		move libfinder.a libs\libfinder.a \
+	) else ( \
+		echo "nothing to do"; \
 	)
 else
 	$(info    Building libfinder linux)
@@ -16,6 +18,8 @@ else
 		ar rcs libfinder.a finder.o && \
 		rm -f finder.o && \
 		mv libfinder.a libs/ ; \
+	else \
+		echo "nothing to do";\
 	fi
 endif
 
@@ -29,7 +33,7 @@ ifeq ($(OS),Windows_NT)
 		del /F /Q catch.o && \
 		move libcatch.a libs/libcatch.a \
 	) else ( \
-		echo "Compiled" \
+		echo "nothing to do" \
 	)
 else
 	mkdir -p libs
@@ -39,12 +43,36 @@ else
 		rm -f catch.o && \
 		mv libcatch.a libs/; \
 	else \
-		echo "Compiled"; \
+		echo "nothing to do"; \
+	fi
+endif
+
+libxxhash:
+	$(info    Building xxhash)
+ifeq ($(OS),Windows_NT)
+	
+	@if not exist ./libs/libxxhash.a ( \
+		g++ -std=c++17 -O -c ./xxhash/xxhash.c -o xxhash.o && \
+		ar rcs libxxhash.a xxhash.o && \
+		del /F /Q xxhash.o && \
+		move libxxhash.a libs/libxxhash.a \
+	) else ( \
+		echo "nothing to do"; \
+	)
+else
+	mkdir -p libs
+	@if [ ! -f ./libs/libxxhash.a ]; then \
+		g++ -std=c++17 -O -c ./xxhash/xxhash.c -o xxhash.o && \
+		ar rcs libxxhash.a xxhash.o && \
+		rm -f xxhash.o && \
+		mv libxxhash.a libs/; \
+	else \
+		echo "nothing to do"; \
 	fi
 endif
 
 
-libs: libcatch libfinder
+libs: libcatch libfinder libxxhash
 
 test: libs
 	$(info    Test Build)
@@ -57,13 +85,14 @@ else
 	./test.out
 endif
 
-build: libfinder
+build: libfinder libxxhash
 	$(info    Binary build)
 ifeq ($(OS),Windows_NT)
-	g++ -std=c++17 main.cpp -Ifinder -Llibs -lfinder -lssl -lcrypto -lxxhash main.exe -Wno-unused-parameter -Wno-deprecated-declarations
+	g++ -std=c++17 main.cpp -Ifinder -Llibs -lfinder -lssl -lcrypto -lxxhash -o main.exe -Wno-unused-parameter -Wno-deprecated-declarations
 else
-	g++ -std=c++17 main.cpp -Ifinder -Llibs -lfinder -lssl -lcrypto -lxxhash -o main.out -Wno-unused-parameter -Wdeprecated-declarations
+	g++ -std=c++17 main.cpp -Ifinder -Llibs -lfinder -lssl -lcrypto -lxxhash.a -o main.out -Wno-unused-parameter -Wdeprecated-declarations
 endif
+
 
 run: build
 ifeq ($(OS),Windows_NT)
@@ -82,3 +111,6 @@ else
 endif
 
 r: run
+
+
+
