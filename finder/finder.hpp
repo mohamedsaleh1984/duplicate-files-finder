@@ -20,6 +20,7 @@
 #include <thread>
 #include <chrono>
 #include <cmath>
+#include <algorithm>
 #include "../xxhash/xxhash.h"
 using namespace std;
 namespace fs = std::filesystem;

@@ -16,6 +16,8 @@ void Finder::post_search()
     cout << "Total file size : " << bytesToSize(total_files_size()) << endl;
     cout << "Total Duplicate files : " << total_duplicate_files_count() << endl;
     cout << "Total Duplicate files size : " << bytesToSize(total_duplicate_files_size()) << endl;
+
+    delete_duplicate_files();
 }
 
 int Finder::total_files()
@@ -72,6 +74,46 @@ unsigned long long Finder::total_duplicate_files_size()
 
 void Finder::delete_duplicate_files()
 {
+    bool bfetchInput = true;
+    string strAnswer = "";
+
+    while (bfetchInput)
+    {
+        cout << "Would you like to delete duplicate files ?" << endl;
+        cin >> strAnswer;
+
+        std::transform(strAnswer.begin(), strAnswer.end(), strAnswer.begin(), ::tolower);
+
+        if (strAnswer == "yes" || strAnswer == "no")
+        {
+            if (strAnswer == "yes")
+            {
+                map<string, vector<fs::path>>::iterator it = _findings.begin();
+                while (it != _findings.end())
+                {
+                    vector<fs::path> files = it->second;
+                    if (files.size() > 1)
+                    {
+                        for (int i = 1; i < files.size(); i++)
+                        {
+                            std::filesystem::remove(files[i]);
+                            cout << files[i].filename().string() << " has been deleted successfully." << endl;
+                        }
+                    }
+                    it++;
+                }
+                bfetchInput = false;
+            }
+            else if (strAnswer == "no")
+            {
+                bfetchInput = false;
+            }
+        }
+        else
+        {
+            cout << "Invalid input." << endl;
+        }
+    }
 }
 
 void Finder::start_search(fs::path root)
