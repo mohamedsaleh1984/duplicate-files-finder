@@ -79,7 +79,7 @@ void Finder::delete_duplicate_files()
 
     while (bfetchInput)
     {
-        cout << "Would you like to delete duplicate files ?" << endl;
+        cout << "Would you like to delete duplicate files? (yes/no)" << endl;
         cin >> strAnswer;
 
         std::transform(strAnswer.begin(), strAnswer.end(), strAnswer.begin(), ::tolower);
