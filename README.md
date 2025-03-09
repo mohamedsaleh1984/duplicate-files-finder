@@ -21,3 +21,8 @@ clean
 ```
 make clean
 ```
+
+#### Next Step
+- Add Parameters 
+    - Delete files without asking user
+    - Show duplicate files
