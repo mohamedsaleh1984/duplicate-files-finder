@@ -442,7 +442,27 @@ void Finder::export_duplicate_files()
 /// @return
 bool Finder::write_search_results()
 {
-    return false;
+    ofstream wf("search_result.bin", ios::out | ios::binary);
+    if (!wf)
+    {
+        cout << "Cannot open file!" << endl;
+        return false;
+    }
+
+    struct search_result search_res;
+    search_res.files = this->_files;
+    search_res.findings = this->_findings;
+    search_res.last_processed_index = this->_last_proc_index;
+
+    wf.write((char *)&search_res, sizeof(search_result));
+    wf.close();
+
+    if (!wf.good())
+    {
+        return false;
+    }
+
+    return true;
 }
 
 /// @brief Set last processed file
@@ -461,6 +481,19 @@ int Finder::get_last_processed_file_index()
 
 struct search_result Finder::read_search_result(string outfile)
 {
-    struct search_result result;
-    return result;
+    struct search_result read_file;
+    ifstream rf(outfile, ios::out | ios::binary);
+    if (!rf)
+    {
+        cout << "Cannot open file!" << endl;
+        return read_file;
+    }
+    rf.read((char *)&read_file, sizeof(search_result));
+    rf.close();
+    if (!rf.good())
+    {
+        cout << "Error occurred at reading time!" << endl;
+        return read_file;
+    }
+    return read_file;
 }
