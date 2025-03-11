@@ -211,7 +211,7 @@ void Finder::start_search(fs::path root)
         hashing_stat_file.close();
     }
     auto all_start = std::chrono::high_resolution_clock::now();
-
+    int last_processed_file = -1;
     for (const auto &f : _files)
     {
         string filePath = f.generic_string();
@@ -243,6 +243,8 @@ void Finder::start_search(fs::path root)
         {
             // found
             _findings[hashResult.hash].push_back(f);
+            last_processed_file++;
+            set_last_processed_file_index(last_processed_file);
         }
         else
         {
@@ -263,6 +265,8 @@ void Finder::start_search(fs::path root)
             elem.second = paths;
 
             _findings.insert(elem);
+            last_processed_file++;
+            set_last_processed_file_index(last_processed_file);
         }
     }
 
@@ -272,7 +276,6 @@ void Finder::start_search(fs::path root)
     cout << "Total process took " << total_milli_sec.count() << " ms, "
          << milliseconds_to_minutes(total_milli_sec.count()) << " mins, "
          << milliseconds_to_hours(total_milli_sec.count()) << " hours." << endl;
-
     cout << "*****************************************************************" << endl;
 
     post_search();
@@ -433,4 +436,31 @@ void Finder::export_duplicate_files()
             cout << "Invalid input." << endl;
         }
     }
+}
+
+/// @brief Write search results in binary, last processed hash
+/// @return
+bool Finder::write_search_results()
+{
+    return false;
+}
+
+/// @brief Set last processed file
+/// @param hash
+void Finder::set_last_processed_file_index(int index)
+{
+    this->_last_proc_index = index;
+}
+
+/// @brief Fetch the last processed file
+/// @return
+int Finder::get_last_processed_file_index()
+{
+    return this->_last_proc_index;
+}
+
+struct search_result Finder::read_search_result(string outfile)
+{
+    struct search_result result;
+    return result;
 }

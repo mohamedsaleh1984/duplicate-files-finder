@@ -40,6 +40,13 @@ namespace ns_finder
         bool has_error = false;
     };
 
+    struct search_result
+    {
+        vector<fs::path> files;
+        map<string, vector<fs::path>> findings;
+        int last_processed_index;
+    };
+
     class Finder
     {
     private:
@@ -63,11 +70,16 @@ namespace ns_finder
         void getDirectories(const fs::path &root, vector<fs::path> &dirsOut);
         vector<fs::path> getFiles(vector<fs::path> &dirs);
         struct hash_result calculate_xxhash(const std::string &file_path);
+        bool write_search_results();
+        void set_last_processed_file_index(int index);
+        int get_last_processed_file_index();
+        struct search_result read_search_result(string outfile);
 
     private:
         fs::path _root;
         vector<fs::path> _files;
         map<string, vector<fs::path>> _findings;
+        int _last_proc_index;
     };
 }
 

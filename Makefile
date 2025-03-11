@@ -77,20 +77,20 @@ libs: libcatch libfinder libxxhash
 test: libs
 	$(info    Test Build)
 ifeq ($(OS),Windows_NT)
-	g++ -std=c++17 test.cpp -Ifilehlper -Icatch -Llibs -lfinder -lcatch -lssl -lcrypto -lxxhash -o test.exe
+	g++ -std=c++17 test.cpp -Ifilehlper -Icatch -Llibs -lfinder -lcatch  -lxxhash -o test.exe
 	$(info    Test Run)
 	.\test.exe
 else
-	g++ -std=c++17 test.cpp -Ifilehlper -Icatch -Llibs -lfinder -lcatch -lssl -lcrypto -lxxhash -o test.out
+	g++ -std=c++17 test.cpp -Ifilehlper -Icatch -Llibs -lfinder -lcatch -lxxhash -o test.out
 	./test.out
 endif
 
 build: clean libfinder libxxhash
 	$(info    Binary build)
 ifeq ($(OS),Windows_NT)
-	g++ -std=c++17 main.cpp -Ifinder -Llibs -lfinder -lssl -lcrypto -lxxhash -o main.exe -Wno-unused-parameter -Wno-deprecated-declarations
+	g++ -std=c++17 main.cpp -Ifinder -Llibs -lfinder -lxxhash -o main.exe -Wno-unused-parameter -Wno-deprecated-declarations
 else
-	g++ -std=c++17 main.cpp -Ifinder -Llibs -lfinder -lssl -lcrypto -lxxhash.a -o main.out -Wno-unused-parameter -Wdeprecated-declarations
+	g++ -std=c++17 main.cpp -Ifinder -Llibs -lfinder -lxxhash.a -o main.out -Wno-unused-parameter -Wdeprecated-declarations
 endif
 
 

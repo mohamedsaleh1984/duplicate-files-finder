@@ -24,10 +24,25 @@ test : run test cases using catch library
 make test
 ```
 
-#### Next Step
+# Next Step
 - Add Parameters 
     - Delete files without asking user.
     - Show duplicate files.
     - Resume option to avoid start over and lose previous processed files.
     - provide Output file as parameter to delete duplicate files.
+    - Add note for the user to warn about altering the file
+
+
+# Notes
+- create new struct search result retaining search results.
+    - Needs to serialize findings, files
+    - store the last processed hash
+    - write them in binary
+- use system pause to ask user if they want to retain search result
+- add another parameter to read last search result
+- need to come up with faster hashing for big files 
+    - (Read first and last 100 MB concat both hashes as a new key) size >= 500 MB && size <= 1 GB
+    - (Read first and last 300 MB concat both hashes as a new key) size > 1 GB
+    -  create new temp file out of the big files and generate hash for it.
+
     
