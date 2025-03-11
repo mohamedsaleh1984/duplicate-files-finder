@@ -67,14 +67,15 @@ namespace ns_finder
         int milliseconds_to_minutes(unsigned long long milliseconds);
         string write_temp_file(fs::path file_path);
         string generate_guid_pseudorandom();
-        string generate_hash_big_files(fs::path file_path);
+        struct hash_result calculate_xxhash_big_files(const std::string file_path);
+        struct hash_result calculate_xxhash(const std::string file_path);
 
     public:
         Finder();
         void start_search(fs::path root);
         void getDirectories(const fs::path &root, vector<fs::path> &dirsOut);
         vector<fs::path> getFiles(vector<fs::path> &dirs);
-        struct hash_result calculate_xxhash(const std::string file_path);
+
         bool write_search_results();
         void set_last_processed_file_index(int index);
         int get_last_processed_file_index();

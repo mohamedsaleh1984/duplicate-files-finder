@@ -215,12 +215,21 @@ void Finder::start_search(fs::path root)
     for (const auto &f : _files)
     {
         string filePath = f.generic_string();
-
+        unsigned long long file_siz = std::filesystem::file_size(filePath);
         auto start = std::chrono::high_resolution_clock::now();
-        hash_result hashResult = calculate_xxhash(filePath);
+        hash_result hashResult;
+
+        if (file_siz >= (500 * 1024 * 1024))
+        {
+            hashResult = calculate_xxhash_big_files(filePath);
+        }
+        else
+        {
+            hashResult = calculate_xxhash(filePath);
+        }
+
         auto end = std::chrono::high_resolution_clock::now();
         auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-        unsigned long long file_siz = std::filesystem::file_size(filePath);
 
         if (DEBUG_MODE)
         {
@@ -502,20 +511,25 @@ struct search_result Finder::read_search_result(string outfile)
 /// @brief Generate files for big files more than 500mb
 /// @param file_path
 /// @return
-string Finder::generate_hash_big_files(fs::path file_path)
+struct hash_result Finder::calculate_xxhash_big_files(const std::string file_path)
 {
+    struct hash_result res;
     string temp_file_path = write_temp_file(file_path);
     if (temp_file_path.length() == 0)
     {
-        cout << "Failed to write temp file for " << file_path.filename() << endl;
-        return "";
+        fs::path fpath = temp_file_path;
+        string sname = fpath.filename().string();
+        string s = "Failed to write temp file for " + sname;
+        res.error_message = s;
+        res.has_error = true;
+        return res;
     }
 
-    hash_result hashResult = calculate_xxhash(temp_file_path);
+    res = calculate_xxhash(temp_file_path);
     fs::path spath = temp_file_path;
     fs::remove(spath);
 
-    return hashResult.hash;
+    return res;
 }
 
 /// @brief Write temp file for big files.
