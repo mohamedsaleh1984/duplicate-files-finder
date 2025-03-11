@@ -1,7 +1,7 @@
 #ifndef _FINDER_H_
 #define _FINDER_H_
 
-// filehlper.hpp
+// finder.hpp
 // author: mohamed.saleh2@snhu.edu
 // date: 03/03/2025
 
@@ -27,7 +27,6 @@ namespace fs = std::filesystem;
 namespace ns_finder
 {
     const unsigned long int CHUNK_SIZE = 8192;
-    const unsigned long int BUFFER_SIZE = 4096;
     /// @brief Retain error information.
     struct hash_result
     {
@@ -50,23 +49,15 @@ namespace ns_finder
         void post_search();
         void pre_search();
         std::string bytesToSize(unsigned long long bytes);
+        void export_duplicate_files();
+        string shorten_file_name(string fileNameWOExt);
+        void printout_stat();
 
     public:
         Finder();
-        /// @brief Search
-        /// @param root
         void start_search(fs::path root);
-
-        /// @brief Get directories in root
-        /// @param root
-        /// @param dirsOut
         void getDirectories(const fs::path &root, vector<fs::path> &dirsOut);
-
-        /// @brief Return list of files in Dirs directories
-        /// @param dirs
-        /// @return
         vector<fs::path> getFiles(vector<fs::path> &dirs);
-
         struct hash_result calculate_xxhash(const std::string &file_path);
 
     private:
