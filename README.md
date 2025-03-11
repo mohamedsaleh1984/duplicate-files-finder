@@ -24,12 +24,18 @@ test : run test cases using catch library
 make test
 ```
 
-# Commit type abbreviation
-- t: add/remove/modify typo
-- c: add/remove/modify comments/readme
-- r: refactor code for better readability/maintenance
-- f: fix a bug/change ds
-- wip: add/remove/modify code
+# Change Log
+| Description  | Date |
+| ------------- | ------------- |
+|create new struct search result retaining search results.|03/11/2025|
+|Needs to serialize findings, files|03/11/2025|
+|store the last processed hash|03/11/2025|
+|write them in binary|03/11/2025|
+|need to come up with faster hashing for big files --> DONE|03/11/2025|
+|(Read first and last 100 MB concat both hashes as a new key) size >= 500 MB && size <= 1 GB --> DONE|03/11/2025|
+|(Read first and last 300 MB concat both hashes as a new key) size > 1 GB --> DONE|03/11/2025|
+|create new temp file out of the big files and generate hash for it. --> DONE  | 03/11/2025|
+
 
 # Next Step
 - Add Parameters 
@@ -45,14 +51,12 @@ make test
     - Construct search duplicate file structure
 
 # Notes
-- create new struct search result retaining search results.
-    - Needs to serialize findings, files
-    - store the last processed hash
-    - write them in binary
-- use system pause to ask user if they want to retain search result
-- need to come up with faster hashing for big files 
-    - (Read first and last 100 MB concat both hashes as a new key) size >= 500 MB && size <= 1 GB
-    - (Read first and last 300 MB concat both hashes as a new key) size > 1 GB
-    -  create new temp file out of the big files and generate hash for it.
 
-    
+- use system pause to ask user if they want to retain search result
+
+# Commit type abbreviation
+- t: add/remove/modify typo
+- c: add/remove/modify comments/readme
+- r: refactor code for better readability/maintenance
+- f: fix a bug/change ds
+- wip: add/remove/modify code
