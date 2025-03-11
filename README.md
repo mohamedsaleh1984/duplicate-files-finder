@@ -24,6 +24,12 @@ test : run test cases using catch library
 make test
 ```
 
+# Commit type abbreviation
+- t: add/remove/modify typo
+- c: add/remove/modify comments
+- r: refactor code for better readability/maintenance
+- f: fix a bug/change ds
+
 # Next Step
 - Add Parameters 
     - Delete files without asking user.

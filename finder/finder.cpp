@@ -479,6 +479,7 @@ int Finder::get_last_processed_file_index()
     return this->_last_proc_index;
 }
 
+/// @brief Read search result from file
 struct search_result Finder::read_search_result(string outfile)
 {
     struct search_result read_file;
