@@ -54,6 +54,7 @@ namespace ns_finder
         void export_duplicate_files();
         string shorten_file_name(string fileNameWOExt);
         void printout_stat();
+        int milliseconds_to_hours(unsigned long long milliseconds);
 
     public:
         Finder();
