@@ -37,7 +37,11 @@ make test
     - Resume option to avoid start over and lose previous processed files.
     - provide Output file as parameter to delete duplicate files.
     - Add note for the user to warn about altering the file
-
+    - add another parameter to read last search result
+- Enhancement
+    - Add a flag in output file to make which file to delete
+    - Parse output file
+    - Construct search duplicate file structure
 
 # Notes
 - create new struct search result retaining search results.
@@ -45,7 +49,6 @@ make test
     - store the last processed hash
     - write them in binary
 - use system pause to ask user if they want to retain search result
-- add another parameter to read last search result
 - need to come up with faster hashing for big files 
     - (Read first and last 100 MB concat both hashes as a new key) size >= 500 MB && size <= 1 GB
     - (Read first and last 300 MB concat both hashes as a new key) size > 1 GB
