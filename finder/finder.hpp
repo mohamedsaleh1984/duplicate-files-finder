@@ -69,6 +69,7 @@ namespace ns_finder
         string generate_guid_pseudorandom();
         struct hash_result calculate_xxhash_big_files(const std::string file_path);
         struct hash_result calculate_xxhash(const std::string file_path);
+        fs::path genertae_temp_path();
 
     public:
         Finder();
