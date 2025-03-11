@@ -29,6 +29,7 @@ make test
 - c: add/remove/modify comments/readme
 - r: refactor code for better readability/maintenance
 - f: fix a bug/change ds
+- wip: add/remove/modify code
 
 # Next Step
 - Add Parameters 

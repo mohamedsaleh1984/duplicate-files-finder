@@ -322,7 +322,7 @@ vector<fs::path> Finder::getFiles(vector<fs::path> &dirs)
 }
 
 /// @brief Calculate hash using xxhash
-struct hash_result Finder::calculate_xxhash(const std::string &file_path)
+struct hash_result Finder::calculate_xxhash(const std::string file_path)
 {
     struct hash_result res;
     const char *p = file_path.c_str();
@@ -497,4 +497,107 @@ struct search_result Finder::read_search_result(string outfile)
         return read_file;
     }
     return read_file;
+}
+
+/// @brief Generate files for big files more than 500mb
+/// @param file_path
+/// @return
+string Finder::generate_hash_big_files(fs::path file_path)
+{
+    string temp_file_path = write_temp_file(file_path);
+    if (temp_file_path.length() == 0)
+    {
+        cout << "Failed to write temp file for " << file_path.filename() << endl;
+        return "";
+    }
+
+    hash_result hashResult = calculate_xxhash(temp_file_path);
+    fs::path spath = temp_file_path;
+    fs::remove(spath);
+
+    return hashResult.hash;
+}
+
+/// @brief Write temp file for big files.
+/// @param file_path
+/// @return
+string Finder::write_temp_file(fs::path file_path)
+{
+    unsigned long long file_size = fs::file_size(file_path);
+    std::ifstream file(file_path.generic_string(), std::ios::binary);
+
+    if (!file.is_open())
+    {
+        cout << "Error opening file: " << file_path.generic_string() << endl;
+        return "";
+    }
+
+    // prepare buffer.
+    unsigned long int mb = 1024 * 1024;
+    unsigned long int buffer_size = file_size >= (500 * mb) && file_size <= (mb * 1024) ? 100 : 300;
+    buffer_size = buffer_size * (mb);
+
+    // first
+    std::vector<char> b_buffer(buffer_size);
+    // last
+    std::vector<char> e_buffer(buffer_size);
+
+    file.read(b_buffer.data(), buffer_size);
+    file.seekg(-buffer_size, std::ios::end);
+    file.read(e_buffer.data(), buffer_size);
+    file.close();
+
+    if (!file.good())
+    {
+        cout << "Error reading file: " << file_path.generic_string() << endl;
+        return "";
+    }
+
+    // create new file out of the two chunks
+    std::vector<char> new_bytes(buffer_size * 2);
+    int i = 0;
+    for (; i < buffer_size; i++)
+        new_bytes[i] = b_buffer[i];
+
+    for (int x = 0; x < buffer_size; x++)
+    {
+        new_bytes[i] = b_buffer[x];
+        i++;
+    }
+
+    // write it
+    string guid_file_name = generate_guid_pseudorandom();
+    fs::path dir_path = fs::temp_directory_path();
+    fs::path full_path = dir_path / guid_file_name;
+
+    string temp_file_path = full_path.generic_string();
+    std::ofstream ofile(temp_file_path, std::ios::out);
+    ofile.write((char *)&new_bytes, buffer_size * 2);
+    ofile.close();
+    if (!ofile.good())
+    {
+        cout << "Error writing file: _temp" << endl;
+        return "";
+    }
+
+    return temp_file_path;
+}
+
+/// @brief Generate GUID
+/// @return
+std::string Finder::generate_guid_pseudorandom()
+{
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> distrib(0, 255);
+    std::stringstream ss;
+    for (int i = 0; i < 16; ++i)
+    {
+        ss << std::hex << std::setw(2) << std::setfill('0') << distrib(gen);
+        if (i == 3 || i == 5 || i == 7 || i == 9)
+        {
+            ss << '-';
+        }
+    }
+    return ss.str();
 }
