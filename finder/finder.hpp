@@ -55,6 +55,7 @@ namespace ns_finder
         string shorten_file_name(string fileNameWOExt);
         void printout_stat();
         int milliseconds_to_hours(unsigned long long milliseconds);
+        int milliseconds_to_minutes(unsigned long long milliseconds);
 
     public:
         Finder();
