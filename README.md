@@ -29,7 +29,7 @@ make test
 | ------------- | ------------- |
 |create new struct search result retaining search results.|03/11/2025|
 |Needs to serialize findings, files|03/11/2025|
-|store the last processed hash|03/11/2025|
+|store the last processed index|03/11/2025|
 |write them in binary|03/11/2025|
 |need to come up with faster hashing for big files --> DONE|03/11/2025|
 |(Read first and last 100 MB concat both hashes as a new key) size >= 500 MB && size <= 1 GB --> DONE|03/11/2025|
