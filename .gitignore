@@ -7,3 +7,4 @@ test.out
 *.o
 *.a
 hashing_stat.txt
+output.txt

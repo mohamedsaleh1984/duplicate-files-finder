@@ -14,7 +14,7 @@ clean : remove all executables and libs for clean re-build
 make clean
 ```
 
-run : run binary file 
+run : clean, build and run binary file 
 ```
 make run
 ```

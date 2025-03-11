@@ -173,7 +173,11 @@ void Finder::start_search(fs::path root)
 
     getDirectories(_root, dirs);
 
+    auto start = std::chrono::high_resolution_clock::now();
     getFiles(dirs);
+    auto end = std::chrono::high_resolution_clock::now();
+    auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    cout << "Taken time to read all files " << milliseconds.count() << " ms" << endl;
 
     map<string, vector<fs::path>>::iterator it;
 
@@ -186,6 +190,7 @@ void Finder::start_search(fs::path root)
         ofstream hashing_stat_file("hashing_stat.txt");
         hashing_stat_file.close();
     }
+    auto all_start = std::chrono::high_resolution_clock::now();
 
     for (const auto &f : _files)
     {
@@ -240,6 +245,9 @@ void Finder::start_search(fs::path root)
             _findings.insert(elem);
         }
     }
+
+    auto all_end = std::chrono::high_resolution_clock::now();
+    cout << "Total Time taken to process all files " << milliseconds.count() << " ms" << endl;
 
     post_search();
 }
@@ -350,25 +358,36 @@ void Finder::export_duplicate_files()
         {
             if (strAnswer == "yes")
             {
-                string fiveTabs = "\t\t\t\t\t";
+
                 // Write to a file
                 std::ofstream outFile("output.txt");
+
                 if (outFile.is_open())
                 {
                     map<string, vector<fs::path>>::iterator it = _findings.begin();
-                    outFile << "File Name" + fiveTabs + "Status " << endl;
+                    outFile << std::setw(30) << std::left << "File Name" << setw(10) << "Status " << endl;
+
+                    int counter = 0;
                     while (it != _findings.end())
                     {
+                        counter++;
+
                         vector<fs::path> files = it->second;
 
                         if (files.size() > 1)
                         {
-                            outFile << shorten_file_name(files[0].filename().string()) + fiveTabs + to_string(files.size()) + " Duplicates" << endl;
+                            outFile << to_string(counter) << ") " << std::setw(30) << std::left << shorten_file_name(files[0].filename().string()) << setw(10) << std::left << to_string(files.size() - 1) + " Duplicates" << endl;
+                            outFile << " -" << shorten_file_name(files[0].filename().string()) << setw(10) << std::left << "Located at:" << files[0].generic_string() << endl;
+                            for (int i = 1; i < files.size(); i++)
+                            {
+                                outFile << " --" << files[i].generic_string() << endl;
+                            }
                         }
                         else
                         {
-                            outFile << shorten_file_name(files[0].filename().string()) + fiveTabs + "No Duplicates" << endl;
+                            outFile << to_string(counter) << ") " << std::setw(30) << std::left << shorten_file_name(files[0].filename().string()) << setw(10) << std::left << "N/A" << endl;
                         }
+
                         it++;
                     }
 
