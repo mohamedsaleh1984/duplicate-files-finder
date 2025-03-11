@@ -206,7 +206,7 @@ void Finder::start_search(fs::path root)
         {
             ofstream hashing_stat_file("hashing_stat.txt", ios::app);
             auto seconds = std::chrono::duration_cast<std::chrono::seconds>(end - start);
-            hashing_stat_file << "Time taken ::" << milliseconds.count() << " ms, " << seconds.count() << " sec "
+            hashing_stat_file << setw(15) << "Time taken ::" << milliseconds.count() << std::right << " ms, " << setw(10) << seconds.count() << " sec "
                               << " file ::" << f.filename().string()
                               << " size ::" << bytesToSize(file_siz) << endl;
             hashing_stat_file.close();
@@ -248,6 +248,8 @@ void Finder::start_search(fs::path root)
 
     auto all_end = std::chrono::high_resolution_clock::now();
     cout << "Total Time taken to process all files " << milliseconds.count() << " ms" << endl;
+    cout << endl;
+    cout << "*****************************************************************" << endl;
 
     post_search();
 }
