@@ -7,7 +7,7 @@ Finder::Finder()
 
 void Finder::pre_search()
 {
-    // cout << "Pre-Search..." << endl;
+    cout << "Please wait...working on your request." << endl;
 }
 
 void Finder::post_search()
@@ -135,6 +135,7 @@ void Finder::start_search(fs::path root)
     dirs.push_back(root);
 
     getDirectories(_root, dirs);
+
     getFiles(dirs);
 
     map<string, vector<fs::path>>::iterator it;
@@ -155,10 +156,10 @@ void Finder::start_search(fs::path root)
         {
             // found
             _findings[hashResult.hash].push_back(f);
-            // cout << "found hash " << hashResult.hash << endl;
-        }
+                }
         else
         {
+            cout << "Working on " << f.filename().string() << endl;
             // construct new element
             pair<string, vector<fs::path>> elem;
             vector<fs::path> paths;

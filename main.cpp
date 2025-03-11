@@ -13,13 +13,13 @@
 #include "xxhash/xxhash.h"
 using namespace std;
 using namespace ns_finder;
-#define RELEASE
+#define DEBUG
 
 int main(int argc, char **argv)
 {
 #ifdef DEBUG
     Finder fin;
-    fs::path root = "D:\\____c";
+    fs::path root = "Z:\\z";
     fin.start_search(root);
 #endif
 
