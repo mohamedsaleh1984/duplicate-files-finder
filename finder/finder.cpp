@@ -151,6 +151,8 @@ string Finder::shorten_file_name(string fileNameWOExt)
     return fileNameWOExt;
 }
 
+/// @brief Start Processing
+/// @param root
 void Finder::start_search(fs::path root)
 {
     if (root.generic_string().length() == 0)
@@ -178,8 +180,14 @@ void Finder::start_search(fs::path root)
     for (const auto &f : _files)
     {
         string filePath = f.generic_string();
-        // cout << "Path:" << filePath << endl;
+
+        auto start = std::chrono::high_resolution_clock::now();
         hash_result hashResult = calculate_xxhash(filePath);
+        auto end = std::chrono::high_resolution_clock::now();
+        auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
+        unsigned long long file_siz = std::filesystem::file_size(filePath);
+
         if (hashResult.has_error)
         {
             cout << "error " << hashResult.error_message << endl;
@@ -195,6 +203,8 @@ void Finder::start_search(fs::path root)
         else
         {
             cout << "Working on " << f.filename().string() << endl;
+            cout << "Processing Time is " << milliseconds.count() << " milliseconds for file size " << bytesToSize(file_siz) << endl;
+            cout << endl;
             // construct new element
             pair<string, vector<fs::path>> elem;
             vector<fs::path> paths;
