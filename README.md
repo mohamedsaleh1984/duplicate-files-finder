@@ -1,28 +1,32 @@
 # Duplicate Files Finder
 Cross platform tool to find duplicate files based on file hash using fast hashing algorithm xxhash.
 
-build
+# Main function
+- Read give directory and fetch all files in sub-directories as well and hash map them via hash code
+
+build : build source code and generate and link libs binaries to executables 
 ```
 make build
 ```
 
-run
-```
-make run
-```
-
-test
-
-```
-make test
-```
-
-clean
+clean : remove all executables and libs for clean re-build 
 ```
 make clean
 ```
 
+run : run binary file 
+```
+make run
+```
+
+test : run test cases using catch library
+```
+make test
+```
+
 #### Next Step
 - Add Parameters 
-    - Delete files without asking user
-    - Show duplicate files
+    - Delete files without asking user.
+    - Show duplicate files.
+    - Resume option to avoid start over and lose previous processed files.
+
