@@ -26,7 +26,7 @@ make test
 
 # Commit type abbreviation
 - t: add/remove/modify typo
-- c: add/remove/modify comments
+- c: add/remove/modify comments/readme
 - r: refactor code for better readability/maintenance
 - f: fix a bug/change ds
 
