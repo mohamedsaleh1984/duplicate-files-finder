@@ -372,22 +372,18 @@ void Finder::export_duplicate_files()
                     int counter = 0;
                     while (it != _findings.end())
                     {
-                        counter++;
 
                         vector<fs::path> files = it->second;
 
                         if (files.size() > 1)
                         {
+                            counter++;
                             outFile << to_string(counter) << ") " << std::setw(30) << std::left << shorten_file_name(files[0].filename().string()) << setw(10) << std::left << to_string(files.size() - 1) + " Duplicates" << endl;
                             outFile << " -" << shorten_file_name(files[0].filename().string()) << setw(10) << std::left << "Located at:" << files[0].generic_string() << endl;
                             for (int i = 1; i < files.size(); i++)
                             {
                                 outFile << " --" << files[i].generic_string() << endl;
                             }
-                        }
-                        else
-                        {
-                            outFile << to_string(counter) << ") " << std::setw(30) << std::left << shorten_file_name(files[0].filename().string()) << setw(10) << std::left << "N/A" << endl;
                         }
 
                         it++;

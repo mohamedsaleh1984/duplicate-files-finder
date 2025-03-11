@@ -19,7 +19,7 @@ int main(int argc, char **argv)
     if (ns_finder::DEBUG_MODE)
     {
         Finder fin;
-        fs::path root = "D:\\Personal";
+        fs::path root = "D:\\Gallary";
         fin.start_search(root);
     }
 

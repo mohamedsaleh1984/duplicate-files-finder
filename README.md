@@ -29,4 +29,5 @@ make test
     - Delete files without asking user.
     - Show duplicate files.
     - Resume option to avoid start over and lose previous processed files.
-
+    - provide Output file as parameter to delete duplicate files.
+    
