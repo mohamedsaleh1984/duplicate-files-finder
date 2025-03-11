@@ -200,7 +200,10 @@ void Finder::start_search(fs::path root)
         if (DEBUG_MODE)
         {
             ofstream hashing_stat_file("hashing_stat.txt", ios::app);
-            hashing_stat_file << file_siz << " " << milliseconds.count() << " ms" << endl;
+            auto seconds = std::chrono::duration_cast<std::chrono::seconds>(end - start);
+            hashing_stat_file << "Time taken ::" << milliseconds.count() << " ms, " << seconds.count() << " sec "
+                              << " file ::" << f.filename().string()
+                              << " size ::" << bytesToSize(file_siz) << endl;
             hashing_stat_file.close();
         }
 
@@ -219,8 +222,13 @@ void Finder::start_search(fs::path root)
         else
         {
             cout << "Working on " << f.filename().string() << endl;
-            cout << "Processing Time is " << milliseconds.count() << " milliseconds for file size " << bytesToSize(file_siz) << endl;
-            cout << endl;
+            auto seconds = std::chrono::duration_cast<std::chrono::seconds>(end - start);
+            if (DEBUG_MODE)
+            {
+                cout << "Processing Time is " << seconds.count() << " seconds for file size " << bytesToSize(file_siz) << endl;
+                cout << endl;
+            }
+
             // construct new element
             pair<string, vector<fs::path>> elem;
             vector<fs::path> paths;
