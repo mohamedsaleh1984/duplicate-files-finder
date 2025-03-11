@@ -26,7 +26,9 @@ namespace fs = std::filesystem;
 
 namespace ns_finder
 {
+    const bool DEBUG_MODE = true;
     const unsigned long int CHUNK_SIZE = 8192;
+
     /// @brief Retain error information.
     struct hash_result
     {

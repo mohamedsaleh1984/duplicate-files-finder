@@ -13,38 +13,39 @@
 #include "xxhash/xxhash.h"
 using namespace std;
 using namespace ns_finder;
-#define DEBUG
 
 int main(int argc, char **argv)
 {
-#ifdef DEBUG
-    Finder fin;
-    fs::path root = "Z:\\z";
-    fin.start_search(root);
-#endif
-
-#ifdef RELEASE
-    bool bfetch = true;
-
-    while (bfetch)
+    if (ns_finder::DEBUG_MODE)
     {
-        if (argc == 2)
-        {
-            bfetch = false;
-            string programName = argv[0];
-            string location = argv[1];
+        Finder fin;
+        fs::path root = "Z:\\z";
+        fin.start_search(root);
+    }
 
-            Finder fin;
-            fs::path root = argv[1];
-            fin.start_search(root);
-        }
-        else
+    if (!ns_finder::DEBUG_MODE)
+    {
+        bool bfetch = true;
+
+        while (bfetch)
         {
-            std::cerr << "Usage: ./main.exe dir_location\n";
-            bfetch = false;
+            if (argc == 2)
+            {
+                bfetch = false;
+                string programName = argv[0];
+                string location = argv[1];
+
+                Finder fin;
+                fs::path root = argv[1];
+                fin.start_search(root);
+            }
+            else
+            {
+                std::cerr << "Usage: ./main.exe dir_location\n";
+                bfetch = false;
+            }
         }
     }
-#endif
 
     return 0;
 }

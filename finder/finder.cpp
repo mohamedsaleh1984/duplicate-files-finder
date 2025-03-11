@@ -177,6 +177,16 @@ void Finder::start_search(fs::path root)
 
     map<string, vector<fs::path>>::iterator it;
 
+    if (DEBUG_MODE)
+    {
+        // delete hashing stat
+        if (fs::exists("hashing_stat.txt"))
+            fs::remove("hashing_stat.txt");
+
+        ofstream hashing_stat_file("hashing_stat.txt");
+        hashing_stat_file.close();
+    }
+
     for (const auto &f : _files)
     {
         string filePath = f.generic_string();
@@ -185,8 +195,14 @@ void Finder::start_search(fs::path root)
         hash_result hashResult = calculate_xxhash(filePath);
         auto end = std::chrono::high_resolution_clock::now();
         auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-
         unsigned long long file_siz = std::filesystem::file_size(filePath);
+
+        if (DEBUG_MODE)
+        {
+            ofstream hashing_stat_file("hashing_stat.txt", ios::app);
+            hashing_stat_file << file_siz << " " << milliseconds.count() << " ms" << endl;
+            hashing_stat_file.close();
+        }
 
         if (hashResult.has_error)
         {
@@ -290,6 +306,9 @@ struct hash_result Finder::calculate_xxhash(const std::string &file_path)
     return res;
 }
 
+/// @brief Present bytes in readable format.
+/// @param bytes
+/// @return
 std::string Finder::bytesToSize(unsigned long long bytes)
 {
     const std::string sizes[] = {"Bytes", "KB", "MB", "GB", "TB"};
