@@ -219,22 +219,12 @@ void Finder::start_search(fs::path root)
         auto start = std::chrono::high_resolution_clock::now();
         hash_result hashResult;
 
-        // if (file_siz >= (500 * 1024 * 1024))
-        // {
-        //     hashResult = calculate_xxhash_big_files(filePath);
-        //     if (hashResult.has_error)
-        //         continue;
-        // }
-        // else
-        // {
         hashResult = calculate_xxhash(filePath);
         if (hashResult.has_error)
         {
             cout << "ERROR ::" << hashResult.error_message << endl;
             continue;
         }
-
-        // }
 
         auto end = std::chrono::high_resolution_clock::now();
         auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
@@ -341,6 +331,14 @@ vector<fs::path> Finder::getFiles(vector<fs::path> &dirs)
 /// @brief Calculate hash using xxhash
 struct hash_result Finder::calculate_xxhash(const std::string file_path)
 {
+    fs::path p = file_path;
+    unsigned long long int file_siz = fs::file_size(p);
+
+    if (file_siz >= (500 * 1024 * 1024))
+    {
+        return calculate_xxhash_big_files(file_path);
+    }
+
     struct hash_result res;
     const char *p = file_path.c_str();
     FILE *file = fopen(p, "rb");
@@ -549,8 +547,13 @@ struct hash_result Finder::calculate_xxhash_big_files(const std::string file_pat
 string Finder::write_temp_file(fs::path file_path)
 {
     unsigned long long file_size = fs::file_size(file_path);
-    const char *cpath = file_path.generic_string().c_str();
-    std::ifstream file(cpath, std::ios::binary);
+    if (DEBUG_MODE)
+    {
+        cout << "File size " << file_size << endl;
+    }
+
+    string fpath = file_path.generic_string();
+    std::ifstream file(fpath, ios_base::binary);
 
     if (!file.is_open())
     {
@@ -558,9 +561,11 @@ string Finder::write_temp_file(fs::path file_path)
         return "";
     }
 
-    // prepare buffer.
-    unsigned long int mb = 1024 * 1024;
-    unsigned long int buffer_size = file_size >= (500 * mb) && file_size <= (mb * 1024) ? 100 : 300;
+    // prepare buffers.
+    unsigned long int mb = 1'000 * 1024;
+    unsigned long int gb = 1'000 * mb;
+    // greater than 500 and less then GB
+    unsigned long int buffer_size = file_size >= (500 * mb) && file_size <= gb ? 100 : 300;
     buffer_size = buffer_size * (mb);
 
     // first and last buffers
@@ -568,54 +573,56 @@ string Finder::write_temp_file(fs::path file_path)
     std::vector<char> e_buffer(buffer_size);
     size_t bytes_read = 0;
 
-    while (file.read(b_buffer.data(), buffer_size))
-    {
-        if (bytes_read == buffer_size)
-            break;
-    }
-
-    // bytes_read = 0;
-    // file.seekg(-buffer_size, std::ios::end);
-
-    // while (file.read(e_buffer.data(), buffer_size))
-    // {
-    //     if (bytes_read == buffer_size)
-    //         break;
-    // }
-
+    file.read(b_buffer.data(), buffer_size);
+    file.seekg(-buffer_size, std::ios::end);
+    file.read(e_buffer.data(), buffer_size);
     file.close();
 
-    // create new file out of the two chunks
-    std::vector<char> new_bytes(buffer_size * 2);
-    int i = 0;
-    for (; i < buffer_size; i++)
-        new_bytes[i] = b_buffer[i];
-
-    for (int x = 0; x < buffer_size; x++)
+    if (DEBUG_MODE)
     {
-        new_bytes[i] = b_buffer[x];
-        i++;
+        cout << "Read successfully " << endl;
+        cout << "First " << b_buffer.size() << endl;
+        cout << "Second " << e_buffer.size() << endl;
     }
 
-    // write it
+    // create new temp path
+    fs::path ofile_path = generate_temp_path();
+    std::ofstream ofile(ofile_path.generic_string());
 
-    fs::path full_path = genertae_temp_path();
-    string temp_file_path = full_path.generic_string();
-    std::ofstream ofile(temp_file_path, std::ios::out);
-    ofile.write((char *)&new_bytes, buffer_size * 2);
-    ofile.close();
-    if (!ofile.good())
+    // create new file
+    if (!ofile)
     {
-        cout << "Error writing file: _temp" << endl;
+        cout << "Failed to create file" << endl;
         return "";
     }
 
-    return temp_file_path;
+    if (DEBUG_MODE)
+    {
+        cout << "File Created Successfully." << endl;
+    }
+
+    ofile.write(b_buffer.data(), buffer_size);
+
+    if (DEBUG_MODE)
+    {
+        cout << "Written First half " << buffer_size << endl;
+    }
+
+    ofile.write(e_buffer.data(), buffer_size);
+
+    if (DEBUG_MODE)
+    {
+        cout << "Written Second half " << buffer_size << endl;
+    }
+
+    ofile.close();
+
+    return ofile_path.generic_string();
 }
 
 /// @brief Generate GUID
 /// @return
-std::string Finder::generate_guid_pseudorandom()
+std::string Finder::generate_guid()
 {
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -632,9 +639,9 @@ std::string Finder::generate_guid_pseudorandom()
     return ss.str();
 }
 
-fs::path Finder::genertae_temp_path()
+fs::path Finder::generate_temp_path()
 {
-    string guid_file_name = generate_guid_pseudorandom();
+    string guid_file_name = generate_guid();
     fs::path dir_path = fs::temp_directory_path();
     fs::path full_path = dir_path / guid_file_name;
     return full_path;

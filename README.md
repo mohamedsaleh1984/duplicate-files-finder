@@ -27,6 +27,8 @@ make test
 # Change Log
 | Description  | Date |
 | ------------- | ------------- |
+|Fixed hashing big files > 500mb|03/12/2025|
+|Abstracted hashing big files function|03/12/2025|
 |create new struct search result retaining search results.|03/11/2025|
 |Needs to serialize findings, files|03/11/2025|
 |store the last processed index|03/11/2025|
