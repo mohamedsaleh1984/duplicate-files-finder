@@ -331,8 +331,8 @@ vector<fs::path> Finder::getFiles(vector<fs::path> &dirs)
 /// @brief Calculate hash using xxhash
 struct hash_result Finder::calculate_xxhash(const std::string file_path)
 {
-    fs::path p = file_path;
-    unsigned long long int file_siz = fs::file_size(p);
+    fs::path spath = file_path;
+    unsigned long long int file_siz = fs::file_size(spath);
 
     if (file_siz >= (500 * 1024 * 1024))
     {
