@@ -1,25 +1,28 @@
 # Duplicate Files Finder
 Cross platform tool to find duplicate files based on file hash using fast hashing algorithm xxhash.
 
+# Dependencies
+- C++17
+
 # Main function
 - Read give directory and fetch all files in sub-directories as well and hash map them via hash code
 
-build : build source code and generate and link libs binaries to executables 
+### build : build source code and generate and link libs binaries to executables 
 ```
 make build
 ```
 
-clean : remove all executables and libs for clean re-build 
+### clean : remove all executables and libs for clean re-build 
 ```
 make clean
 ```
 
-run : clean, build and run binary file 
+### run : clean, build and run binary file 
 ```
 make run
 ```
 
-test : run test cases using catch library
+### test : run test cases using catch library
 ```
 make test
 ```
@@ -38,7 +41,6 @@ make test
 |(Read first and last 300 MB concat both hashes as a new key) size > 1 GB --> DONE|03/11/2025|
 |create new temp file out of the big files and generate hash for it. --> DONE  | 03/11/2025|
 
-
 # Next Step
 - Add Parameters 
     - Delete files without asking user.
@@ -52,6 +54,8 @@ make test
     - Parse output file
     - Construct search duplicate file structure
     - All files should be in MD format not text format for better parsing.
+    - Need to add gitmodule to keep things up to date with maddy (MD Parser lib)
+    - Use MD tables to mark desired files to delelete instead of text files.   
 
 # Notes
 
