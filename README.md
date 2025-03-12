@@ -51,6 +51,7 @@ make test
     - Add a flag in output file to make which file to delete
     - Parse output file
     - Construct search duplicate file structure
+    - All files should be in MD format not text format for better parsing.
 
 # Notes
 
