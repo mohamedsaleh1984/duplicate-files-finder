@@ -1,9 +1,15 @@
+/*
+    Copyright © 2025 Mohamed Saleh. All Rights Reserved.
+
+    This software and its source code are the exclusive property of Mohamed Saleh.
+    Unauthorized copying, modification, distribution, or use of this software,
+    in whole or in part, is strictly prohibited.
+
+    For licensing inquiries, please contact mohamedsaleh1984@hotmail.com.
+
+*/
 #ifndef _FINDER_H_
 #define _FINDER_H_
-
-// finder.hpp
-// author: mohamed.saleh2@snhu.edu
-// date: 03/03/2025
 
 #include <iostream>
 #include <fstream>

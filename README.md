@@ -7,6 +7,11 @@ Cross platform tool to find duplicate files based on file hash using fast hashin
 # Main function
 - Read give directory and fetch all files in sub-directories as well and hash map them via hash code
 
+# License
+This software is proprietary. All rights reserved.  
+Unauthorized copying, modification, or distribution is strictly prohibited.  
+For licensing inquiries, please contact mohamedsaleh1984@hotmail.com.
+
 ### build : build source code and generate and link libs binaries to executables 
 ```
 make build
