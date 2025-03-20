@@ -53,7 +53,7 @@ namespace ns_finder
         vector<fs::path> files;
         map<string, vector<fs::path>> findings;
         int last_processed_index;
-        std::string root;
+        char root[256];
     };
 
     class Finder

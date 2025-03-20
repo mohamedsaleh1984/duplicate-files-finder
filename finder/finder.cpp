@@ -205,7 +205,7 @@ void Finder::start_search(fs::path root)
         throw std::runtime_error("Root path is not exists.");
     }
 
-    bool result = check_previous_search_result();
+    bool result = false; // check_previous_search_result();
     if (result)
     {
         fs::path p_root = this->_prev_search_result.root;
@@ -456,8 +456,8 @@ bool Finder::write_search_results()
 {
     delete_if_Exists("search_result.bin");
 
-    ofstream wf("search_result.bin", ios::out | ios::binary);
-    if (!wf)
+    ofstream outputFile("search_result.bin", ios::binary);
+    if (!outputFile)
     {
         cout << "Cannot open file!" << endl;
         return false;
@@ -467,12 +467,15 @@ bool Finder::write_search_results()
     search_res.files = this->_files;
     search_res.findings = this->_findings;
     search_res.last_processed_index = this->_last_proc_index;
-    search_res.root = this->_root.generic_string();
+    strcpy(search_res.root, this->_root.generic_string().c_str());
 
-    wf.write((char *)&search_res, sizeof(search_result));
-    wf.close();
+    if (outputFile.is_open())
+    {
+        outputFile.write(reinterpret_cast<char *>(&search_res), sizeof(search_res));
+        outputFile.close();
+    }
 
-    if (!wf.good())
+    if (!outputFile.good())
     {
         return false;
     }
@@ -496,23 +499,26 @@ int Finder::get_last_processed_file_index()
 /// @brief Read search result from file
 struct search_result Finder::read_search_result(string outfile)
 {
+    struct search_result read_search_result;
+    ifstream inputFile;
+    inputFile.open(outfile, ios::binary);
 
-    struct search_result read_file;
-    ifstream rf(outfile, ios::out | ios::binary);
+    if (inputFile.is_open())
+    {
+        inputFile.read(reinterpret_cast<char *>(&read_search_result), sizeof(read_search_result));
+        inputFile.close();
 
-    if (!rf)
-    {
-        cout << "Cannot open file!" << endl;
-        return read_file;
+        // cout << read_search_result.files.size() << endl;
+        // cout << read_search_result.root << endl;
+        // cout << read_search_result.last_processed_index << endl;
     }
-    rf.read((char *)&read_file, sizeof(search_result));
-    rf.close();
-    if (!rf.good())
+    else
     {
-        cout << "Error occurred at reading time!" << endl;
-        return read_file;
+        cout << "Error opening file for reading." << endl;
+        return read_search_result;
     }
-    return read_file;
+
+    return read_search_result;
 }
 
 /// @brief Generate files for big files more than 500mb
