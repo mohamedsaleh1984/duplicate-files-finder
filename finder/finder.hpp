@@ -53,6 +53,7 @@ namespace ns_finder
         vector<fs::path> files;
         map<string, vector<fs::path>> findings;
         int last_processed_index;
+        std::string root;
     };
 
     class Finder
@@ -68,12 +69,11 @@ namespace ns_finder
         void export_duplicate_files();
         void printout_stat();
         string write_temp_file(fs::path file_path);
-
         struct hash_result calculate_xxhash_big_files(const std::string file_path);
-
         fs::path generate_temp_path();
         void set_last_processed_file_index(int index);
         int get_last_processed_file_index();
+        bool check_previous_search_result();
 
     public:
         Finder();
@@ -89,6 +89,7 @@ namespace ns_finder
         vector<fs::path> _files;
         map<string, vector<fs::path>> _findings;
         int _last_proc_index;
+        struct search_result _prev_search_result;
     };
 }
 

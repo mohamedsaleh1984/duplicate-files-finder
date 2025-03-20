@@ -90,6 +90,7 @@ unsigned long long Finder::total_duplicate_files_size()
 {
     unsigned long long total_wasted_space = 0;
     map<string, vector<fs::path>>::iterator it = _findings.begin();
+
     while (it != _findings.end())
     {
         vector<fs::path> files = it->second;
@@ -149,6 +150,47 @@ void Finder::delete_duplicate_files()
     }
 }
 
+/// @brief load or discard previous search result
+bool Finder::check_previous_search_result()
+{
+    fs::path search_result = "search_result.bin";
+    if (fs::exists(search_result))
+    {
+        bool bfetchInput = true;
+        string strAnswer = "";
+        while (bfetchInput)
+        {
+            cout << "Would you like to load previous search results?" << endl;
+            cin >> strAnswer;
+
+            std::transform(strAnswer.begin(), strAnswer.end(), strAnswer.begin(), ::tolower);
+
+            if (strAnswer == "yes" || strAnswer == "no")
+            {
+                if (strAnswer == "yes")
+                {
+                    this->_prev_search_result = read_search_result("search_result.bin");
+
+                    cout << "Your search process was on " << this->_prev_search_result.root << " directory.";
+                    bfetchInput = false;
+                    return true;
+                }
+
+                else if (strAnswer == "no")
+                {
+                    bfetchInput = false;
+                    return false;
+                }
+            }
+            else
+            {
+                cout << "Invalid input." << endl;
+            }
+        }
+    }
+    return false;
+}
+
 /// @brief Start Processing
 /// @param root
 void Finder::start_search(fs::path root)
@@ -161,6 +203,19 @@ void Finder::start_search(fs::path root)
     if (!fs::exists(root))
     {
         throw std::runtime_error("Root path is not exists.");
+    }
+
+    bool result = check_previous_search_result();
+    if (result)
+    {
+        fs::path p_root = this->_prev_search_result.root;
+
+        this->_root = p_root;
+        this->_findings = this->_prev_search_result.findings;
+        this->_last_proc_index = this->_prev_search_result.last_processed_index;
+        this->_files = this->_prev_search_result.files;
+
+        return;
     }
 
     _root = root;
@@ -191,6 +246,7 @@ void Finder::start_search(fs::path root)
 
         hashing_stat_file.close();
     }
+
     auto all_start = std::chrono::high_resolution_clock::now();
     int last_processed_file = -1;
     for (const auto &f : _files)
@@ -256,6 +312,7 @@ void Finder::start_search(fs::path root)
             last_processed_file++;
             set_last_processed_file_index(last_processed_file);
         }
+        write_search_results();
     }
 
     auto all_end = std::chrono::high_resolution_clock::now();
@@ -400,6 +457,7 @@ bool Finder::write_search_results()
     search_res.files = this->_files;
     search_res.findings = this->_findings;
     search_res.last_processed_index = this->_last_proc_index;
+    search_res.root = this->_root.generic_string();
 
     wf.write((char *)&search_res, sizeof(search_result));
     wf.close();
@@ -552,6 +610,8 @@ string Finder::write_temp_file(fs::path file_path)
     return ofile_path.generic_string();
 }
 
+/// @brief Generate Temp file at Temp Directory.
+/// @return
 fs::path Finder::generate_temp_path()
 {
     string guid_file_name = Utilities::generate_guid();
