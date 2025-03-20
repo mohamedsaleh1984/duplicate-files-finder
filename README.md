@@ -60,9 +60,7 @@ make test
     - Add a flag in output file to make which file to delete
     - Parse output file
     - Construct search duplicate file structure
-    - All output files should be in MD format not text format for better parsing.
     - Need to add gitmodule to keep things up to date with maddy (MD Parser lib)
-    - Use MD tables to mark desired files to delelete instead of text files.   
 
 # Notes
 
