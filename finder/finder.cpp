@@ -10,6 +10,9 @@
 */
 
 #include "finder.hpp"
+#include "../fileWriter/textFileWriter.cpp"
+#include "../fileWriter/mdFileWriter.cpp"
+
 using namespace ns_finder;
 
 /// @brief Finder Constructor
@@ -164,18 +167,6 @@ void Finder::delete_duplicate_files()
             cout << "Invalid input." << endl;
         }
     }
-}
-
-/// @brief Shorten File Name
-/// @param fileNameWOExt give file name without extension
-/// @return new file name
-string Finder::shorten_file_name(string fileNameWOExt)
-{
-    if (fileNameWOExt.length() > 25)
-    {
-        return fileNameWOExt.substr(0, 22).append("...");
-    }
-    return fileNameWOExt;
 }
 
 /// @brief Start Processing
@@ -410,42 +401,12 @@ void Finder::export_duplicate_files()
             if (strAnswer == "yes")
             {
 
-                // Write to a file
-                std::ofstream outFile("output.txt");
+                // TextFileWriter tfw;
+                // tfw.WriteDuplicate(this->_findings);
 
-                if (outFile.is_open())
-                {
-                    map<string, vector<fs::path>>::iterator it = _findings.begin();
-                    outFile << std::setw(30) << std::left << "File Name" << setw(10) << "Status " << endl;
+                MdFileWriter mfw;
+                mfw.WriteDuplicate(this->_findings);
 
-                    int counter = 0;
-                    while (it != _findings.end())
-                    {
-
-                        vector<fs::path> files = it->second;
-
-                        if (files.size() > 1)
-                        {
-                            counter++;
-                            outFile << to_string(counter) << ") " << std::setw(30) << std::left << shorten_file_name(files[0].filename().string()) << setw(10) << std::left << to_string(files.size() - 1) + " Duplicates" << endl;
-                            outFile << " -" << shorten_file_name(files[0].filename().string()) << setw(10) << std::left << "Located at:" << files[0].generic_string() << endl;
-                            for (int i = 1; i < files.size(); i++)
-                            {
-                                outFile << " --" << files[i].generic_string() << endl;
-                            }
-                        }
-
-                        it++;
-                    }
-
-                    outFile.close();
-                }
-                else
-                {
-                    cout << "Failed to create file." << endl;
-                }
-
-                cout << "Please check output.txt" << endl;
                 bfetchInput = false;
             }
             else if (strAnswer == "no")

@@ -35,6 +35,7 @@ make test
 # Change Log
 | Description  | Date |
 | ------------- | ------------- |
+|Refactor fileWriter for MD/Text|03/20/2025|
 |Fixed hashing big files > 500mb|03/12/2025|
 |Abstracted hashing big files function|03/12/2025|
 |create new struct search result retaining search results.|03/11/2025|

@@ -67,7 +67,6 @@ namespace ns_finder
         void pre_search();
         std::string bytesToSize(unsigned long long bytes);
         void export_duplicate_files();
-        string shorten_file_name(string fileNameWOExt);
         void printout_stat();
         int milliseconds_to_hours(unsigned long long milliseconds);
         int milliseconds_to_minutes(unsigned long long milliseconds);

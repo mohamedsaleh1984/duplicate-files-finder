@@ -19,7 +19,6 @@
 #include <algorithm>
 #include <cassert>
 #include <vector>
-#include "misc/misc.hpp"
 #include "finder/finder.hpp"
 #include "xxhash/xxhash.h"
 using namespace std;
@@ -30,7 +29,7 @@ int main(int argc, char **argv)
     if (ns_finder::DEBUG_MODE)
     {
         Finder fin;
-        fs::path root = "z:\\z";
+        fs::path root = "D:\\Personal";
         fin.start_search(root);
     }
 
