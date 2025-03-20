@@ -50,6 +50,26 @@ public:
 
         return std::string(result);
     }
+
+    /// @brief Convert milliseconds to hours.
+    /// @param milliseconds
+    /// @return
+    static int milliseconds_to_hours(unsigned long long milliseconds)
+    {
+        int seconds = milliseconds / 1000;
+        int hours = seconds / 3600;
+        return hours;
+    }
+
+    /// @brief Convert milliseconds to hours.
+    /// @param milliseconds
+    /// @return
+    static int milliseconds_to_minutes(unsigned long long milliseconds)
+    {
+        int seconds = milliseconds / 1000;
+        int minutes = seconds / 60;
+        return minutes;
+    }
 };
 
 #endif

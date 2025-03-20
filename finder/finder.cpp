@@ -84,26 +84,6 @@ unsigned long long Finder::total_files_size()
     return size;
 }
 
-/// @brief Convert milliseconds to hours.
-/// @param milliseconds
-/// @return
-int Finder::milliseconds_to_hours(unsigned long long milliseconds)
-{
-    int seconds = milliseconds / 1000;
-    int hours = seconds / 3600;
-    return hours;
-}
-
-/// @brief Convert milliseconds to hours.
-/// @param milliseconds
-/// @return
-int Finder::milliseconds_to_minutes(unsigned long long milliseconds)
-{
-    int seconds = milliseconds / 1000;
-    int minutes = seconds / 60;
-    return minutes;
-}
-
 /// @brief Total duplicate files sizes in bytes.
 /// @return
 unsigned long long Finder::total_duplicate_files_size()
@@ -279,8 +259,8 @@ void Finder::start_search(fs::path root)
     auto total_milli_sec = std::chrono::duration_cast<std::chrono::milliseconds>(all_end - all_start);
 
     cout << "Total process took " << total_milli_sec.count() << " ms, "
-         << milliseconds_to_minutes(total_milli_sec.count()) << " mins, "
-         << milliseconds_to_hours(total_milli_sec.count()) << " hours." << endl;
+         << Utilities::milliseconds_to_minutes(total_milli_sec.count()) << " mins, "
+         << Utilities::milliseconds_to_hours(total_milli_sec.count()) << " hours." << endl;
     cout << "*****************************************************************" << endl;
 
     post_search();

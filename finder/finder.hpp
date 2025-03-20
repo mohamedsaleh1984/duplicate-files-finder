@@ -67,8 +67,6 @@ namespace ns_finder
         void pre_search();
         void export_duplicate_files();
         void printout_stat();
-        int milliseconds_to_hours(unsigned long long milliseconds);
-        int milliseconds_to_minutes(unsigned long long milliseconds);
         string write_temp_file(fs::path file_path);
         string generate_guid();
         struct hash_result calculate_xxhash_big_files(const std::string file_path);
