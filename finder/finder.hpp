@@ -65,7 +65,6 @@ namespace ns_finder
         void delete_duplicate_files();
         void post_search();
         void pre_search();
-        std::string bytesToSize(unsigned long long bytes);
         void export_duplicate_files();
         void printout_stat();
         int milliseconds_to_hours(unsigned long long milliseconds);

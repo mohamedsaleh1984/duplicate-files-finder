@@ -31,6 +31,25 @@ public:
         }
         return fileNameWOExt;
     }
+
+    /// @brief Present bytes in readable format.
+    /// @param bytes
+    /// @return
+    static std::string bytesToSize(unsigned long long bytes)
+    {
+        const std::string sizes[] = {"Bytes", "KB", "MB", "GB", "TB"};
+        if (bytes == 0)
+            return "n/a";
+
+        int i = static_cast<int>(std::floor(std::log(bytes) / std::log(1024)));
+        if (i == 0)
+            return std::to_string(bytes) + " " + sizes[i];
+
+        char result[20];
+        std::sprintf(result, "%.1f %s", bytes / std::pow(1024, i), sizes[i].c_str());
+
+        return std::string(result);
+    }
 };
 
 #endif

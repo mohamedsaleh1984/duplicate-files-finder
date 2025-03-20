@@ -25,9 +25,9 @@ Finder::Finder()
 void Finder::printout_stat()
 {
     cout << "Total files : " << total_files() << endl;
-    cout << "Total file size : " << bytesToSize(total_files_size()) << endl;
+    cout << "Total file size : " << Utilities::bytesToSize(total_files_size()) << endl;
     cout << "Total Duplicate files : " << total_duplicate_files_count() << endl;
-    cout << "Total Duplicate files size : " << bytesToSize(total_duplicate_files_size()) << endl;
+    cout << "Total Duplicate files size : " << Utilities::bytesToSize(total_duplicate_files_size()) << endl;
 }
 
 /// @brief Action(s) to perform before finder kickoff.
@@ -233,7 +233,7 @@ void Finder::start_search(fs::path root)
             auto seconds = std::chrono::duration_cast<std::chrono::seconds>(end - start);
             hashing_stat_file << setw(15) << "Time taken ::" << milliseconds.count() << std::right << " ms, " << setw(10) << seconds.count() << " sec "
                               << " file ::" << f.filename().string()
-                              << " size ::" << bytesToSize(file_siz) << endl;
+                              << " size ::" << Utilities::bytesToSize(file_siz) << endl;
             hashing_stat_file.close();
         }
 
@@ -257,7 +257,7 @@ void Finder::start_search(fs::path root)
             auto seconds = std::chrono::duration_cast<std::chrono::seconds>(end - start);
             if (DEBUG_MODE)
             {
-                cout << "Processing Time is " << seconds.count() << " seconds for file size " << bytesToSize(file_siz) << endl;
+                cout << "Processing Time is " << seconds.count() << " seconds for file size " << Utilities::bytesToSize(file_siz) << endl;
                 cout << endl;
             }
 
@@ -362,25 +362,6 @@ struct hash_result Finder::calculate_xxhash(const std::string file_path)
     XXH64_freeState(state);
     res.hash = to_string(hash);
     return res;
-}
-
-/// @brief Present bytes in readable format.
-/// @param bytes
-/// @return
-std::string Finder::bytesToSize(unsigned long long bytes)
-{
-    const std::string sizes[] = {"Bytes", "KB", "MB", "GB", "TB"};
-    if (bytes == 0)
-        return "n/a";
-
-    int i = static_cast<int>(std::floor(std::log(bytes) / std::log(1024)));
-    if (i == 0)
-        return std::to_string(bytes) + " " + sizes[i];
-
-    char result[20];
-    std::sprintf(result, "%.1f %s", bytes / std::pow(1024, i), sizes[i].c_str());
-
-    return std::string(result);
 }
 
 /// @brief Export duplicate files to text file.
