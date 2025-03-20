@@ -35,6 +35,7 @@ make test
 # Change Log
 | Description  | Date |
 | ------------- | ------------- |
+|Moved some functions from finder to Utils class|03/20/2025|
 |Refactor fileWriter for MD/Text|03/20/2025|
 |Fixed hashing big files > 500mb|03/12/2025|
 |Abstracted hashing big files function|03/12/2025|

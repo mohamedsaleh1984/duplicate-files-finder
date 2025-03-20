@@ -68,9 +68,9 @@ namespace ns_finder
         void export_duplicate_files();
         void printout_stat();
         string write_temp_file(fs::path file_path);
-        string generate_guid();
+
         struct hash_result calculate_xxhash_big_files(const std::string file_path);
-        struct hash_result calculate_xxhash(const std::string file_path);
+
         fs::path generate_temp_path();
         void set_last_processed_file_index(int index);
         int get_last_processed_file_index();
@@ -82,6 +82,7 @@ namespace ns_finder
         bool write_search_results();
         vector<fs::path> getFiles(vector<fs::path> &dirs);
         struct search_result read_search_result(string outfile);
+        struct hash_result calculate_xxhash(const std::string file_path);
 
     private:
         fs::path _root;
