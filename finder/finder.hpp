@@ -64,6 +64,7 @@ namespace ns_finder
         unsigned long int total_duplicate_files_count();
         unsigned long long total_duplicate_files_size();
         void delete_duplicate_files();
+        void delete_if_Exists(string file_path);
         void post_search();
         void pre_search();
         void export_duplicate_files();

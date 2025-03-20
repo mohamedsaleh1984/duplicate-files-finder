@@ -237,8 +237,7 @@ void Finder::start_search(fs::path root)
     if (DEBUG_MODE)
     {
         // delete hashing stat
-        if (fs::exists("hashing_stat.md"))
-            fs::remove("hashing_stat.md");
+        delete_if_Exists("hashing_stat.md");
 
         ofstream hashing_stat_file("hashing_stat.md");
         hashing_stat_file << "| Time taken in ms | Time taken in sec| File Name | Size |" << endl;
@@ -324,6 +323,15 @@ void Finder::start_search(fs::path root)
     cout << "*****************************************************************" << endl;
 
     post_search();
+}
+
+/// @brief Delete file if exists
+/// @param file_path
+void Finder::delete_if_Exists(string file_path)
+{
+    fs::path p = file_path;
+    if (fs::exists(p))
+        fs::remove(p);
 }
 
 /// @brief Get directories in root
@@ -446,6 +454,8 @@ void Finder::export_duplicate_files()
 /// @return
 bool Finder::write_search_results()
 {
+    delete_if_Exists("search_result.bin");
+
     ofstream wf("search_result.bin", ios::out | ios::binary);
     if (!wf)
     {
@@ -466,7 +476,6 @@ bool Finder::write_search_results()
     {
         return false;
     }
-
     return true;
 }
 
@@ -487,8 +496,10 @@ int Finder::get_last_processed_file_index()
 /// @brief Read search result from file
 struct search_result Finder::read_search_result(string outfile)
 {
+
     struct search_result read_file;
     ifstream rf(outfile, ios::out | ios::binary);
+
     if (!rf)
     {
         cout << "Cannot open file!" << endl;
