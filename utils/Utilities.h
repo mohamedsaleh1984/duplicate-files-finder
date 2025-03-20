@@ -15,6 +15,7 @@
 #include <string>
 #include <stdexcept>
 #include <iomanip>
+#include <random>
 using namespace std;
 
 class Utilities
@@ -69,6 +70,25 @@ public:
         int seconds = milliseconds / 1000;
         int minutes = seconds / 60;
         return minutes;
+    }
+
+    /// @brief Generate GUID
+    /// @return
+    static std::string generate_guid()
+    {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> distrib(0, 255);
+        std::stringstream ss;
+        for (int i = 0; i < 16; ++i)
+        {
+            ss << std::hex << std::setw(2) << std::setfill('0') << distrib(gen);
+            if (i == 3 || i == 5 || i == 7 || i == 9)
+            {
+                ss << '-';
+            }
+        }
+        return ss.str();
     }
 };
 

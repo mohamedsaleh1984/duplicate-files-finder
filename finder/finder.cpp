@@ -549,28 +549,9 @@ string Finder::write_temp_file(fs::path file_path)
     return ofile_path.generic_string();
 }
 
-/// @brief Generate GUID
-/// @return
-std::string Finder::generate_guid()
-{
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distrib(0, 255);
-    std::stringstream ss;
-    for (int i = 0; i < 16; ++i)
-    {
-        ss << std::hex << std::setw(2) << std::setfill('0') << distrib(gen);
-        if (i == 3 || i == 5 || i == 7 || i == 9)
-        {
-            ss << '-';
-        }
-    }
-    return ss.str();
-}
-
 fs::path Finder::generate_temp_path()
 {
-    string guid_file_name = generate_guid();
+    string guid_file_name = Utilities::generate_guid();
     fs::path dir_path = fs::temp_directory_path();
     fs::path full_path = dir_path / guid_file_name;
     return full_path;
