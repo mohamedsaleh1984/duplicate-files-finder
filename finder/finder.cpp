@@ -182,10 +182,13 @@ void Finder::start_search(fs::path root)
     if (DEBUG_MODE)
     {
         // delete hashing stat
-        if (fs::exists("hashing_stat.txt"))
-            fs::remove("hashing_stat.txt");
+        if (fs::exists("hashing_stat.md"))
+            fs::remove("hashing_stat.md");
 
-        ofstream hashing_stat_file("hashing_stat.txt");
+        ofstream hashing_stat_file("hashing_stat.md");
+        hashing_stat_file << "| Time taken in ms | Time taken in sec| File Name | Size |" << endl;
+        hashing_stat_file << "| ---------------- | ---------------- | --------- | ---- |" << endl;
+
         hashing_stat_file.close();
     }
     auto all_start = std::chrono::high_resolution_clock::now();
@@ -209,12 +212,12 @@ void Finder::start_search(fs::path root)
 
         if (DEBUG_MODE)
         {
-            ofstream hashing_stat_file("hashing_stat.txt", ios::app);
+            ofstream hashing_stat_file("hashing_stat.md", ios::app);
             auto seconds = std::chrono::duration_cast<std::chrono::seconds>(end - start);
-            hashing_stat_file << setw(15) << "Time taken ::" << milliseconds.count() << std::right << " ms, " << setw(10) << seconds.count() << " sec "
-                              << " file ::" << f.filename().string()
-                              << " size ::" << Utilities::bytesToSize(file_siz) << endl;
-            hashing_stat_file.close();
+            hashing_stat_file << "|" << milliseconds.count()
+                              << "|" << seconds.count()
+                              << "|" << f.filename().string()
+                              << "|" << Utilities::bytesToSize(file_siz) << "|" << endl;
         }
 
         if (hashResult.has_error)
