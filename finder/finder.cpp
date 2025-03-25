@@ -195,16 +195,22 @@ bool Finder::check_previous_search_result()
 /// @param root
 void Finder::start_search(fs::path root)
 {
+    if (root.empty())
+    {
+        throw std::runtime_error("Root path is null.");
+    }
+
+    // if root length is zero
     if (root.generic_string().length() == 0)
     {
         throw std::runtime_error("Root path is empty.");
     }
 
+    // check if provided path is exists
     if (!fs::exists(root))
     {
         throw std::runtime_error("Root path is not exists.");
     }
-
     bool result = false; // check_previous_search_result();
     if (result)
     {
@@ -236,14 +242,7 @@ void Finder::start_search(fs::path root)
 
     if (DEBUG_MODE)
     {
-        // delete hashing stat
-        delete_if_Exists("hashing_stat.md");
-
-        ofstream hashing_stat_file("hashing_stat.md");
-        hashing_stat_file << "| Time taken in ms | Time taken in sec| File Name | Size |" << endl;
-        hashing_stat_file << "| ---------------- | ---------------- | --------- | ---- |" << endl;
-
-        hashing_stat_file.close();
+        write_stat_header();
     }
 
     auto all_start = std::chrono::high_resolution_clock::now();
@@ -263,16 +262,12 @@ void Finder::start_search(fs::path root)
         }
 
         auto end = std::chrono::high_resolution_clock::now();
-        auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+        std::chrono::milliseconds milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
         if (DEBUG_MODE)
         {
-            ofstream hashing_stat_file("hashing_stat.md", ios::app);
             auto seconds = std::chrono::duration_cast<std::chrono::seconds>(end - start);
-            hashing_stat_file << "|" << milliseconds.count()
-                              << "|" << seconds.count()
-                              << "|" << f.filename().string()
-                              << "|" << Utilities::bytesToSize(file_siz) << "|" << endl;
+            append_stat(milliseconds, seconds, f, file_siz);
         }
 
         if (hashResult.has_error)
@@ -282,12 +277,12 @@ void Finder::start_search(fs::path root)
         }
 
         it = _findings.find(hashResult.hash);
+        last_processed_file++;
+
         if (it != _findings.end())
         {
             // found
             _findings[hashResult.hash].push_back(f);
-            last_processed_file++;
-            set_last_processed_file_index(last_processed_file);
         }
         else
         {
@@ -308,9 +303,9 @@ void Finder::start_search(fs::path root)
             elem.second = paths;
 
             _findings.insert(elem);
-            last_processed_file++;
-            set_last_processed_file_index(last_processed_file);
         }
+
+        set_last_processed_file_index(last_processed_file);
         write_search_results();
     }
 
@@ -388,6 +383,7 @@ struct hash_result Finder::calculate_xxhash(const std::string file_path)
     struct hash_result res;
     const char *p = file_path.c_str();
     FILE *file = fopen(p, "rb");
+
     if (!file)
     {
         res.has_error = true;
@@ -406,9 +402,11 @@ struct hash_result Finder::calculate_xxhash(const std::string file_path)
     }
 
     fclose(file);
+
     XXH64_hash_t hash = XXH64_digest(state);
     XXH64_freeState(state);
     res.hash = to_string(hash);
+
     return res;
 }
 
@@ -467,6 +465,7 @@ bool Finder::write_search_results()
     search_res.files = this->_files;
     search_res.findings = this->_findings;
     search_res.last_processed_index = this->_last_proc_index;
+
     strcpy(search_res.root, this->_root.generic_string().c_str());
 
     if (outputFile.is_open())
@@ -568,11 +567,8 @@ string Finder::write_temp_file(fs::path file_path)
         return "";
     }
 
-    // prepare buffers.
-    unsigned long int mb = 1'000 * 1024;
-    unsigned long int gb = 1'000 * mb;
     // greater than 500 and less then GB
-    unsigned long int buffer_size = file_size >= (500 * mb) && file_size <= gb ? 100 : 300;
+    unsigned long int buffer_size = file_size >= (FIVE_HUNDS * mb) && file_size <= gb ? HUNDS : THREE_HUNDS;
     buffer_size = buffer_size * (mb);
 
     // first and last buffers
@@ -635,4 +631,29 @@ fs::path Finder::generate_temp_path()
     fs::path dir_path = fs::temp_directory_path();
     fs::path full_path = dir_path / guid_file_name;
     return full_path;
+}
+
+void Finder::write_stat_header()
+{
+    // delete hashing stat
+    delete_if_Exists("hashing_stat.md");
+
+    hashing_stat_file.open("hashing_stat.md");
+    hashing_stat_file << "| Time taken in ms | Time taken in sec| File Name | Size |" << endl;
+    hashing_stat_file << "| ---------------- | ---------------- | --------- | ---- |" << endl;
+
+    hashing_stat_file.close();
+}
+
+void Finder::append_stat(chrono::milliseconds milli, chrono::seconds sec,
+                         filesystem::path filePath,
+                         unsigned long long file_siz)
+{
+    hashing_stat_file.open("hashing_stat", ios::app);
+    hashing_stat_file << "|" << milli.count()
+                      << "|" << sec.count()
+                      << "|" << filePath.filename().string()
+                      << "|" << Utilities::bytesToSize(file_siz) << "|" << endl;
+
+    hashing_stat_file.close();
 }

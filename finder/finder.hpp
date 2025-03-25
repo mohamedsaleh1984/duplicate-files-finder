@@ -36,7 +36,11 @@ namespace ns_finder
 {
     const bool DEBUG_MODE = true;
     const unsigned long int CHUNK_SIZE = 8192;
-
+    const int FIVE_HUNDS = 500;
+    const int THREE_HUNDS = 300;
+    const int HUNDS = 100;
+    constexpr unsigned long int mb = 1'000 * 1024;
+    constexpr unsigned long int gb = 1'000 * mb;
     /// @brief Retain error information.
     struct hash_result
     {
@@ -84,6 +88,10 @@ namespace ns_finder
         vector<fs::path> getFiles(vector<fs::path> &dirs);
         struct search_result read_search_result(string outfile);
         struct hash_result calculate_xxhash(const std::string file_path);
+        void write_stat_header();
+        void append_stat(chrono::milliseconds milli, chrono::seconds sec,
+                         filesystem::path filePath,
+                         unsigned long long file_siz);
 
     private:
         fs::path _root;
@@ -91,6 +99,7 @@ namespace ns_finder
         map<string, vector<fs::path>> _findings;
         int _last_proc_index;
         struct search_result _prev_search_result;
+        ofstream hashing_stat_file;
     };
 }
 
