@@ -79,6 +79,7 @@ namespace ns_finder
         void set_last_processed_file_index(int index);
         int get_last_processed_file_index();
         bool check_previous_search_result();
+        std::vector<char> get_buffer_from_file(fs::path file_path);
 
     public:
         Finder();

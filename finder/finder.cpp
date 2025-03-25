@@ -539,11 +539,12 @@ struct hash_result Finder::calculate_xxhash_big_files(const std::string file_pat
     return res;
 }
 
-/// @brief Write temp file for big files.
+/// @brief Get buffer from file for hashing for big files.
 /// @param file_path
 /// @return
-string Finder::write_temp_file(fs::path file_path)
+std::vector<char> Finder::get_buffer_from_file(fs::path file_path)
 {
+    std::vector<char> buff = {};
     unsigned long long file_size = fs::file_size(file_path);
     if (DEBUG_MODE)
     {
@@ -556,7 +557,7 @@ string Finder::write_temp_file(fs::path file_path)
     if (!file.is_open())
     {
         cout << "Error opening file: " << file_path.generic_string() << endl;
-        return "";
+        return buff;
     }
 
     // greater than 500 and less then GB
@@ -573,12 +574,16 @@ string Finder::write_temp_file(fs::path file_path)
     file.read(e_buffer.data(), buffer_size);
     file.close();
 
-    if (DEBUG_MODE)
-    {
-        cout << "Read successfully " << endl;
-        cout << "First " << b_buffer.size() << endl;
-        cout << "Second " << e_buffer.size() << endl;
-    }
+    buff.insert(b_buffer.end(), e_buffer.begin(), e_buffer.end());
+    return buff;
+}
+
+/// @brief Write temp file for big files.
+/// @param file_path
+/// @return
+string Finder::write_temp_file(fs::path file_path)
+{
+    vector<char> buffer = get_buffer_from_file(file_path);
 
     // create new temp path
     fs::path ofile_path = generate_temp_path();
@@ -596,19 +601,7 @@ string Finder::write_temp_file(fs::path file_path)
         cout << "File Created Successfully." << endl;
     }
 
-    ofile.write(b_buffer.data(), buffer_size);
-
-    if (DEBUG_MODE)
-    {
-        cout << "Written First half " << buffer_size << endl;
-    }
-
-    ofile.write(e_buffer.data(), buffer_size);
-
-    if (DEBUG_MODE)
-    {
-        cout << "Written Second half " << buffer_size << endl;
-    }
+    ofile.write(buffer.data(), buffer.size());
 
     ofile.close();
 
@@ -625,6 +618,7 @@ fs::path Finder::generate_temp_path()
     return full_path;
 }
 
+/// @brief Write MD header
 void Finder::write_stat_header()
 {
     // delete hashing stat
@@ -637,6 +631,11 @@ void Finder::write_stat_header()
     hashing_stat_file.close();
 }
 
+/// @brief Append new line to hashing stat
+/// @param milli
+/// @param sec
+/// @param filePath
+/// @param file_siz
 void Finder::append_stat(chrono::milliseconds milli, chrono::seconds sec,
                          filesystem::path filePath,
                          unsigned long long file_siz)
