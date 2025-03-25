@@ -427,10 +427,6 @@ void Finder::export_duplicate_files()
         {
             if (strAnswer == "yes")
             {
-
-                // TextFileWriter tfw;
-                // tfw.WriteDuplicate(this->_findings);
-
                 MdFileWriter mfw;
                 mfw.WriteDuplicate(this->_findings);
 
@@ -506,10 +502,6 @@ struct search_result Finder::read_search_result(string outfile)
     {
         inputFile.read(reinterpret_cast<char *>(&read_search_result), sizeof(read_search_result));
         inputFile.close();
-
-        // cout << read_search_result.files.size() << endl;
-        // cout << read_search_result.root << endl;
-        // cout << read_search_result.last_processed_index << endl;
     }
     else
     {
