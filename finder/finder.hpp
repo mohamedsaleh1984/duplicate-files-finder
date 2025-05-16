@@ -28,6 +28,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <random>
+#include <cstring>
 #include "../xxhash/xxhash.h"
 using namespace std;
 namespace fs = std::filesystem;
