@@ -72,3 +72,6 @@ make test
 - r: refactor code for better readability/maintenance
 - f: fix a bug/change ds
 - wip: add/remove/modify code
+
+# Ref
+https://makefiletutorial.com/#-wildcard
